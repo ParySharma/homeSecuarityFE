@@ -1,7 +1,15 @@
 // 'use client';
 import type { Metadata } from 'next';
-import { CssBaseline } from '@mui/material';
-import './globals.css';
+import { Epilogue, Roboto } from 'next/font/google';
+import '@/styles/globals.css';
+import { AuthProvider } from '@/contexts/JWTContext';
+
+const roboto = Epilogue({
+  weight: ['300', '400', '500', '700', '900'],
+  style: ['normal', 'italic'],
+  subsets: ['latin'],
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'Home Secuarity',
@@ -12,11 +20,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: any) {
   return (
     <html lang='en'>
-      <body>
-        {/* <ThemeProviders> */}
-        <CssBaseline />
-        {children}
-        {/* </ThemeProviders> */}
+      <body className={roboto.className}>
+        {/* <CssBaseline /> */}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

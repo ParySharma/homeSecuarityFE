@@ -5,20 +5,34 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:production": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "next lint",
+    "start-frontend": "npm install && npm run build --prefix admin &&  npm run build --prefix user && concurrently \"npm run start --prefix admin\" \"npm run start --prefix user\""
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.7",
     "@mui/joy": "^5.0.0-beta.52",
     "@mui/material": "^7.3.6",
+    "@reduxjs/toolkit": "^2.11.2",
+    "axios": "^1.13.2",
+    "firebase": "^12.7.0",
+    "formik": "^2.4.9",
+    "js-cookie": "^3.0.5",
     "lodash": "^4.17.21",
     "next": "16.1.1",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "react-redux": "^9.2.0",
+    "redux": "^5.0.1",
+    "redux-persist": "^6.0.0",
+    "socket.io-client": "^4.8.3",
+    "yup": "^1.7.1"
   },
   "devDependencies": {
+    "@types/js-cookie": "^3.0.6",
     "@types/lodash": "^4.17.21",
     "@types/node": "^20",
     "@types/react": "^19",
