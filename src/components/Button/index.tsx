@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import Button from '@mui/material/Button';
 import styled from '@emotion/styled';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -24,29 +24,48 @@ const ButtonWrapper: any = styled(Button, {
     prop !== 'marginBottom',
 })`
   &&.MuiButtonBase-root {
-    // font-size: ${({ fontSize }: any) => fontSize || 14}px;
+    box-shadow: none;
     font-size: ${({ fontSize }: any) => `${convertPxToRem(fontSize || 14)}rem`};
+
     font-weight: ${({ weight }: any) => weight || 400};
-    border-radius: ${({ radius }: any) => radius || 4}px;
-    height: ${({ height }: any) => height || 42}px;
-    width: ${({ width }: any) => width || '100px'};
-    min-height: ${({ minheight }: any) => minheight || 42}px;
-    min-width: ${({ width, minwidth }: any) =>
-      minwidth ? minwidth : `${width}px` || '100px'};
-    margin-top: ${({ mt }: any) => mt || 0}px;
-    margin-right: ${({ mr }: any) => mr || 0}px;
-    margin-bottom: ${({ mb }: any) => mb || 0}px;
-    margin-left: ${({ ml }: any) => ml || 0}px;
+
+    border-radius: ${({ radius }: any) => `${convertPxToRem(radius || 4)}rem`};
+
+    height: ${({ height }: any) => `${convertPxToRem(height || 42)}rem`};
+
+    min-height: ${({ minheight }: any) =>
+      `${convertPxToRem(minheight || 42)}rem`};
+
+    width: ${({ width }: any) =>
+      width ? `${convertPxToRem(width)}rem` : 'auto'};
+
+    min-width: ${({ minwidth, width }: any) =>
+      minwidth
+        ? `${convertPxToRem(minwidth)}rem`
+        : width
+        ? `${convertPxToRem(width)}rem`
+        : 'auto'};
+
+    margin-top: ${({ mt }: any) => `${mt || 0}rem`};
+    margin-right: ${({ mr }: any) => `${convertPxToRem(mr || 0)}rem`};
+    margin-bottom: ${({ mb }: any) => `${convertPxToRem(mb || 0)}rem`};
+    margin-left: ${({ ml }: any) => `${convertPxToRem(ml || 0)}rem`};
+
     position: ${({ position }: any) => position};
-    left: ${({ left }: any) => left};
+    left: ${({ left }: any) => (left ? `${convertPxToRem(left)}rem` : 'auto')};
+
     line-height: normal;
     text-transform: ${({ textTransform }: any) =>
       textTransform || 'capitalize'};
+
     padding: ${({ padding }: any) => padding};
+
     background: ${({ backgroundColor }: any) =>
       backgroundColor || 'var(--primary-button-background-color)'};
+
     color: ${({ textColor }: any) =>
       textColor || 'var(--primary-button-text-color)'};
+
     border: 1px solid
       ${({ borderColor }: any) =>
         borderColor || 'var(--primary-button-background-color)'};
@@ -56,8 +75,10 @@ const ButtonWrapper: any = styled(Button, {
         HoverbgColor ||
         backgroundColor ||
         darkenHexColor('--primary-button-background-color')};
+
       color: ${({ HoverColor, textColor }: any) =>
         HoverColor || textColor || 'var(--primary-button-text-color)'};
+
       border: 1px solid
         ${({ HoverBorder, borderColor }: any) =>
           HoverBorder ||
@@ -66,11 +87,12 @@ const ButtonWrapper: any = styled(Button, {
     }
 
     .MuiButton-startIcon {
-      margin-left: 0px;
+      margin-left: 0;
     }
   }
+
   &&.Mui-disabled {
-    background: var(--field-disabled-text-color) !important  ;
+    background: var(--field-disabled-text-color) !important;
     -webkit-text-fill-color: var(--primary-button-text-color) !important;
     border: 1px solid var(--field-disabled-text-color) !important;
     cursor: not-allowed;
@@ -79,32 +101,22 @@ const ButtonWrapper: any = styled(Button, {
   &&.secondary.MuiButtonBase-root {
     background: ${({ backgroundColor }: any) =>
       backgroundColor || 'var(--secondary-button-background-color)'};
+
     color: ${({ textColor }: any) =>
       textColor || 'var(--secondary-button-text-color)'};
+
     border: 1px solid
       ${({ borderColor }: any) =>
         borderColor || 'var(--secondary-button-background-color)'};
-
-    &:hover {
-      background: ${({ HoverbgColor, backgroundColor }: any) =>
-        HoverbgColor ||
-        backgroundColor ||
-        'var(--secondary-button-background-color)'};
-      color: ${({ HoverColor, textColor }: any) =>
-        HoverColor || textColor || 'var(--secondary-button-text-color)'};
-      border: 1px solid
-        ${({ HoverBorder, borderColor }: any) =>
-          HoverBorder ||
-          borderColor ||
-          'var(--primary-button-background-color)'};
-    }
   }
 
   &&.outline-primary.MuiButtonBase-root {
     background: ${({ backgroundColor }: any) =>
       backgroundColor || 'var(--transparent)'};
+
     color: ${({ textColor }: any) =>
       textColor || 'var(--primary-button-background-color)'};
+
     border: 1px solid
       ${({ borderColor }: any) =>
         borderColor || 'var(--primary-button-background-color)'};
@@ -114,14 +126,6 @@ const ButtonWrapper: any = styled(Button, {
         HoverbgColor ||
         backgroundColor ||
         `${getColorFromRoot('--primary-button-background-color')}1A`};
-
-      color: ${({ HoverColor, textColor }: any) =>
-        HoverColor || textColor || 'var(--primary-button-background-color)'};
-      border: 1px solid
-        ${({ HoverBorder, borderColor }: any) =>
-          HoverBorder ||
-          borderColor ||
-          'var(--primary-button-background-color)'};
     }
   }
 
@@ -130,73 +134,21 @@ const ButtonWrapper: any = styled(Button, {
   }
 `;
 
-const ButtonStyled = ({
-  HoverbgColor,
-  HoverColor,
-  HoverBorder,
-  type,
-  className,
-  text,
-  height,
-  width,
-  weight,
-  onClick,
-  position,
-  left,
-  marginLeft,
-  disabled,
-  backgroundColor,
-  minwidth,
-  borderColor,
-  textColor,
-  radius,
-  loading,
-  startIcon,
-  endIcon,
-  fontSize,
-  mt,
-  mb,
-  mr,
-  ml,
-  padding,
-  id,
-  minheight,
-  textTransform,
-}: any) => {
+const ButtonStyled = ({ loading, text, onClick, ...props }: any) => {
+  const buttonRef = useRef<any>(null);
+
   return (
     <ButtonWrapper
-      HoverbgColor={HoverbgColor}
-      HoverColor={HoverColor}
-      HoverBorder={HoverBorder}
-      type={loading ? BUTTON_TYPE.BUTTON : type}
-      className={className}
-      height={height}
-      minheight={minheight}
-      width={width}
-      minwidth={minwidth}
-      id={id}
-      weight={weight}
-      left={left}
-      position={position}
-      onClick={(event: any) => (!loading && onClick ? onClick(event) : {})}
-      fontSize={fontSize}
-      marginLeft={marginLeft}
-      mt={mt}
-      mb={mb}
-      ml={ml}
-      mr={mr}
-      disabled={disabled}
-      backgroundColor={backgroundColor}
-      borderColor={borderColor}
-      textColor={textColor}
-      radius={radius}
-      startIcon={startIcon}
-      endIcon={endIcon}
-      padding={padding}
-      textTransform={textTransform}
-      // disableRipple
+      {...props}
+      ref={buttonRef}
+      type={loading ? BUTTON_TYPE.BUTTON : props.type}
+      onClick={(e: any) => (!loading && onClick ? onClick(e) : undefined)}
     >
-      {loading ? <CircularProgress size={20} color='inherit' /> : text}
+      {loading ? (
+        <CircularProgress size={`${convertPxToRem(20)}rem`} color='inherit' />
+      ) : (
+        text
+      )}
     </ButtonWrapper>
   );
 };

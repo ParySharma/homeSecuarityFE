@@ -133,3 +133,7 @@ export const USER_ROLES: any = {
   GUARD: 'GUARD',
   OWNER: 'OWNER',
 };
+
+export const REQUEST_CANCELED = 'Request canceled';
+export const SERVER_ERROR =
+  'Oops! Something went wrong on our end. Please try again later or contact support if the issue persists.';

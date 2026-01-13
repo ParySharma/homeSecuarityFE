@@ -3,13 +3,13 @@ import axios from '@/utils/axios';
 import _includes from 'lodash/includes';
 
 // Utils
-import { setSession } from '@/utils/jwt';
 import { getAccessToken, getRefreshToken } from '@/utils/localStorage';
 import { ERROR_CODE_1, ERROR_CODE_2 } from '@/utils/constants';
 
 // Redux
 import { store } from '@/redux/store';
 import { setLogoutFlag } from '@/redux/slices/commonSlice';
+import { setSession } from '@/utils/axiosInstance';
 
 // Utility function to check if an error code indicates token issues
 const isTokenError = (errorCode: any) =>

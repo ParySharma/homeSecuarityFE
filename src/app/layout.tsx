@@ -2,7 +2,8 @@
 import type { Metadata } from 'next';
 import { Epilogue, Roboto } from 'next/font/google';
 import '@/styles/globals.css';
-import { AuthProvider } from '@/contexts/JWTContext';
+import AuthProvider from '@/contexts/Provider';
+import SnackbarProvider from '@/app/snackbarProvider';
 
 const roboto = Epilogue({
   weight: ['300', '400', '500', '700', '900'],
@@ -22,7 +23,9 @@ export default function RootLayout({ children }: any) {
     <html lang='en'>
       <body className={roboto.className}>
         {/* <CssBaseline /> */}
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <SnackbarProvider>{children}</SnackbarProvider>
+        </AuthProvider>
       </body>
     </html>
   );
