@@ -1,50 +1,30 @@
 'use client';
 
 // Libraries
-import { createContext, useEffect, useReducer } from 'react';
+import { createContext, useEffect, useReducer, useCallback } from 'react';
+
+import axios, { setLangHeaders, setSession } from '@/utils/axiosInstance';
 
 // Utils
-import axios from '@/utils/axios';
 import {
   getAccessToken,
   clearAllLocalStorage,
   setUserMeta,
   setLoginResponse,
   getCompanySettings,
-  // getLoginPopupStatus,
   getUserMeta,
   getRefreshToken,
-  getActivePlugins,
-  getSidemenu,
-  fetchHealthForms,
 } from '@/utils/localStorage';
-import { NULL, EMPTY_ARRAY, RESET_STORE } from '@/utils/constants';
 
-import { dispatch as dispatchData, store } from '@/redux/store';
-import { initializeNotifications } from '@/utils/firebase';
-import {
-  setActivePlugins,
-  setCompanySettingsdata,
-  setSideMenuSetting,
-} from '@/redux/slices/commonSlice';
-import SocketService from '@/utils/socket';
-import {
-  getPlugins,
-  healthForm,
-  setpluginDataData,
-  setsideMenuData,
-  sideMenuSetting,
-  sethealthFormData,
-} from '@/redux/slices/pluginSlice';
-import { setSession } from '@/utils/axiosInstance';
-// import { removeThemeVariables } from '@/utils/theme';
+import { NULL, EMPTY_ARRAY, RESET_STORE } from '@/utils/constants';
+import { store } from '@/redux/store';
 
 interface InitialState {
   isAuthenticated: boolean;
   isInitialized: boolean;
-  user: object | any;
+  user: any;
   userRole: number | null;
-  companySettings: object | any;
+  companySettings: any;
   logoutFlag: boolean;
 }
 
@@ -58,114 +38,80 @@ const initialState: InitialState = {
 };
 
 const handlers: any = {
-  INITIALIZE: (state: any, action: any) => {
-    const { isAuthenticated, user, userRole, companySettings } = action.payload;
-    return {
-      ...state,
-      isAuthenticated,
-      isInitialized: true,
-      user,
-      userRole,
-      companySettings,
-      logoutFlag: false,
-    };
-  },
-  UPDATE_USER_PROFILE: (state: any, action: any) => {
-    const { user } = action.payload;
-    return {
-      ...state,
-      user,
-    };
-  },
-  LOGOUT: (state: any, action: any) => {
-    const { logoutFlag } = action.payload;
-    return {
-      ...state,
-      isAuthenticated: false,
-      isInitialized: true,
-      user: NULL,
-      userRole: NULL,
-      logoutFlag,
-    };
-  },
+  INITIALIZE: (state: any, action: any) => ({
+    ...state,
+    ...action.payload,
+    isInitialized: true,
+    logoutFlag: false,
+  }),
+
+  LOGOUT: (state: any, action: any) => ({
+    ...state,
+    isAuthenticated: false,
+    isInitialized: true,
+    user: NULL,
+    userRole: NULL,
+    logoutFlag: action.payload.logoutFlag,
+  }),
 };
 
 const reducer = (state: any, action: any) =>
   handlers[action.type] ? handlers[action.type](state, action) : state;
 
-const AuthContext = createContext({
+const AuthContext = createContext<any>({
   ...initialState,
   method: 'jwt',
-  initialize: () => Promise.resolve(),
-  login: (email: string, password: string, remember_me: boolean, token?: any) =>
-    Promise.resolve(),
-  logout: (email?: string) => Promise.resolve(),
-  // updateUserProfile: (data: any) => Promise.resolve(),
-  // pluginSetup: (company_id: any) => Promise.resolve(),
+  initialize: async () => {},
+  login: async () => {},
+  logout: () => {},
 });
 
-function AuthProvider({ children }: any) {
-  console.log('JWT AuthProvider Rendered');
-
+function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const setLocalStorage = (key: string, data: any) => {
-    localStorage.setItem(key, JSON.stringify(data));
-  };
 
-  const initialize = async () => {
-    console.log('JWT Initialize Called');
-
+  // ✅ MEMOIZED INITIALIZE
+  const initialize = useCallback(async () => {
+    console.log('Auth Initializing...');
+    debugger;
     try {
       const accessToken = getAccessToken();
-      console.log(accessToken, 'accessToken----JWT');
-
-      // const refreshToken = getRefreshToken();
-      const userMeta = getUserMeta();
-      // const activePlugins = getActivePlugins();
+      const refreshToken = getRefreshToken();
+      // const userMeta = getUserMeta();
       // const companySettings = getCompanySettings();
-      // const sidemenu = getSidemenu();
-      // const healthForms = fetchHealthForms();
+      console.log('accessToken, userMeta', accessToken);
 
       if (accessToken) {
-        // setLangHeaders();
-        setSession(accessToken, '');
-        // const user = userMeta;
-        // const companySettings = userMeta?.company?.setting;
-        // const themeSettings = userMeta?.company?.theme_setting;
+        console.log('User is authenticated');
 
-        // store.dispatch(setActivePlugins(activePlugins));
-        // store.dispatch(setpluginDataData(activePlugins));
-        // store.dispatch(setSideMenuSetting(sidemenu));
-        // store.dispatch(setCompanySettingsdata(companySettings));
-        // store.dispatch(setsideMenuData(sidemenu));
-        // store.dispatch(sethealthFormData(healthForms));
+        setSession(accessToken, refreshToken);
 
-        // if (!SocketService.socket) {
-        //   SocketService.connect(userMeta?.id);
-        // }
         dispatch({
           type: 'INITIALIZE',
           payload: {
             isAuthenticated: true,
-            user: userMeta,
-            userRole: userMeta?.role,
-            // companySettings: companySettings,
+            // user: userMeta,
+            // userRole: userMeta?.role_id,
+            // companySettings,
           },
         });
       } else {
         clearAllLocalStorage();
+        setSession(null, null);
+
         dispatch({
           type: 'INITIALIZE',
           payload: {
             isAuthenticated: false,
             user: NULL,
-            companySettings: EMPTY_ARRAY,
             userRole: NULL,
+            companySettings: EMPTY_ARRAY,
           },
         });
       }
-    } catch (err) {
+    } catch (error) {
       clearAllLocalStorage();
+      setSession(null, null);
+
       dispatch({
         type: 'INITIALIZE',
         payload: {
@@ -176,89 +122,58 @@ function AuthProvider({ children }: any) {
         },
       });
     }
-  };
+  }, []);
 
   useEffect(() => {
     initialize();
+  }, [initialize]);
 
-    // const handleBeforeUnload = () => {
-    //   SocketService.disconnect();
-    // };
-    // window.addEventListener('beforeunload', handleBeforeUnload);
-
-    // return () => {
-    //   window.removeEventListener('beforeunload', handleBeforeUnload);
-    // };
-  }, []);
-
-  // const pluginSetup = async (company_id: any) => {
-  //   if (company_id) {
-  //     dispatchData(getPlugins({ company_id }));
-
-  //     dispatchData(healthForm({ company_id }));
-
-  //     dispatchData(sideMenuSetting({ org_id: company_id }));
-  //   }
-  // };
-
+  // ✅ LOGIN
   const login = async (
     mobile: string,
     password: string,
-    remember_me: number,
+    remember_me: boolean,
     token?: any
   ) => {
     try {
-      const response = await axios.post('/auth/login', {
-        mobile,
-        password,
-        remember_me,
-        // token,
-      });
+      const payload = token ? { token } : { mobile, password, remember_me };
+
+      const response = await axios.post(
+        token ? '/auth/verify-token' : '/auth/login',
+        payload
+      );
+      console.log(response, 'response');
 
       if (response?.data?.success) {
-        setUserMeta(response?.data);
-        setLoginResponse(response?.data);
+        const { user_meta, token, refreshToken } = response.data;
 
-        setSession(
-          response?.data?.token,
-          '' // No refresh token provided on login
-        );
-        initialize();
+        setUserMeta(response.data.data);
+        setLoginResponse(response.data.data);
+        setSession(token, 'refreshToken');
 
-        return response;
+        // if (user_meta?.preferred_language) {
+        //   setLangHeaders();
+        // }
+
+        await initialize();
       }
-      console.log(response, 'login response');
 
-      if (!response?.data?.success) return response;
-      console.log('Initializing after login');
-
-      initialize();
+      return response;
     } catch (error) {
       return error;
     }
   };
 
-  // const updateUserProfile = async (data: any) => {
-  //   setUserMeta(data);
-  //   const userMeta = getUserMeta();
-  //   dispatch({
-  //     type: 'UPDATE_USER_PROFILE',
-  //     payload: { user: userMeta },
-  //   });
-  // };
-
-  const logout = (email?: string) => {
-    //   // axios.post('/auth/logout', { email });
+  // ✅ LOGOUT
+  const logout = () => {
     clearAllLocalStorage();
-    // removeThemeVariables();
-    //   store.dispatch({ type: RESET_STORE });
-    //   // SocketService.disconnect();
-    //   // dispatch({
-    //   //   type: 'LOGOUT',
-    //   //   payload: {
-    //   //     logoutFlag: true,
-    //   //   },
-    //   // });
+    setSession(null, null);
+    store.dispatch({ type: RESET_STORE });
+
+    dispatch({
+      type: 'LOGOUT',
+      payload: { logoutFlag: true },
+    });
   };
 
   return (
@@ -268,9 +183,7 @@ function AuthProvider({ children }: any) {
         method: 'jwt',
         initialize,
         login,
-        // pluginSetup,
         logout,
-        // updateUserProfile,
       }}
     >
       {children}

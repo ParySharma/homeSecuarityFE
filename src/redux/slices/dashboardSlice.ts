@@ -3,8 +3,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 // Redux
 import { dispatch } from '@/redux/store';
-import { getListQuery } from '@/api';
-import { EMPTY_ARRAY, EMPTY_OBJECT } from '@/utils/constants';
+import { QueryFnType } from '@/api';
+import { EMPTY_ARRAY } from '@/utils/constants';
 
 interface InitialState {
   isLoading: boolean;
@@ -43,6 +43,16 @@ interface InitialState {
   participationSummaryDashData: any[];
   participationSummaryDashLoading: boolean;
   participationSummaryDashMessage: null;
+  topLeaderBoardLoading: boolean;
+  topLeaderBoardMessage: null;
+  topLeaderBoardData: any[];
+  activityError: any;
+  activityData: any;
+  activityLoading: boolean;
+  orgDashboardData: any;
+  campaignCurrentPointsLoading: boolean;
+  campaignCurrentPointsData: any[];
+  campaignCurrentPointsError: any;
 }
 
 const initialState: InitialState = {
@@ -82,6 +92,16 @@ const initialState: InitialState = {
   participationSummaryDashData: [],
   participationSummaryDashLoading: false,
   participationSummaryDashMessage: null,
+  topLeaderBoardLoading: false,
+  topLeaderBoardMessage: null,
+  topLeaderBoardData: [],
+  activityError: null,
+  activityData: [],
+  activityLoading: false,
+  orgDashboardData: {},
+  campaignCurrentPointsLoading: false,
+  campaignCurrentPointsData: [],
+  campaignCurrentPointsError: null,
 };
 
 const slice = createSlice({
@@ -220,8 +240,8 @@ const slice = createSlice({
 
     // set paticipation summary dashboard data
     // START LOADING
-    setPaticipationSummaryDashLoading(state) {
-      state.participationSummaryDashLoading = true;
+    setPaticipationSummaryDashLoading(state, action: PayloadAction<any>) {
+      state.participationSummaryDashLoading = action.payload;
     },
 
     // set paticipation summary dashboard data
@@ -242,13 +262,21 @@ const slice = createSlice({
     setCampaignRewardDashLoading(state) {
       state.campaignRewardDashLoading = true;
     },
-    setCampaignRewardDashData(state, action: PayloadAction<any>) {
+
+    setCampaignRewardDashData(
+      state,
+      action: PayloadAction<{ campaign_id: string; data: any }>
+    ) {
       state.campaignRewardDashLoading = false;
-      state.campaignRewardDashData = action.payload;
+      const { campaign_id, data } = action.payload;
+      state.campaignRewardDashData = {
+        ...state.campaignRewardDashData,
+        [campaign_id]: data, // Store data by campaign_id
+      };
       state.campaignRewardDashMessage = null;
     },
 
-    //hasError
+    // hasError
     hasCampaignRewardDashError(state, action: PayloadAction<any>) {
       state.campaignRewardDashLoading = false;
       state.campaignRewardDashMessage = action.payload;
@@ -307,8 +335,72 @@ const slice = createSlice({
       state.spouseLoading = false;
       state.spouseMessage = action.payload;
     },
+
+    // set top leader board data
+    // START LOADING
+    setTopLeaderBoardLoading(state) {
+      state.topLeaderBoardLoading = true;
+    },
+
+    setTopLeaderBoardData(state, action: PayloadAction<any>) {
+      state.topLeaderBoardLoading = false;
+      state.topLeaderBoardData = action.payload;
+      state.topLeaderBoardMessage = null;
+    },
+
+    //hasError
+    hasTopLeaderBoardError(state, action: PayloadAction<any>) {
+      state.topLeaderBoardLoading = false;
+      state.topLeaderBoardMessage = action.payload;
+    },
+
+    // set activity data
+    // START LOADING
+    setActivityLoading(state) {
+      state.activityLoading = true;
+    },
+
+    setActivityData(state, action: PayloadAction<any>) {
+      state.activityLoading = false;
+      state.activityData = action.payload;
+      state.activityError = null;
+    },
+
+    //hasError
+    hasActivityError(state, action: PayloadAction<any>) {
+      state.activityLoading = false;
+      state.activityError = action.payload;
+    },
+    setOrgDashboardData(state, action: PayloadAction<any>) {
+      state.orgDashboardData = action.payload;
+    },
+
+    // set campaign current points data
+    // START LOADING
+    setCampaignCurrentPointsLoading(state) {
+      state.campaignCurrentPointsLoading = true;
+    },
+    // set campaign current points data
+    setCampaignCurrentPointsData(state, action: PayloadAction<any>) {
+      state.campaignCurrentPointsLoading = false;
+      state.campaignCurrentPointsData = action.payload;
+      state.campaignCurrentPointsError = null;
+    },
+
+    //hasError
+    hasCampaignCurrentPointsError(state, action: PayloadAction<any>) {
+      state.campaignCurrentPointsLoading = false;
+      state.campaignCurrentPointsError = action.payload;
+    },
   },
 });
+
+export const {
+  setOrgDashboardData,
+  setPaticipationSummaryData,
+  setCampaignRewardData,
+  setPaticipationSummaryDashLoading,
+} = slice.actions;
 
 export default slice.reducer;
 
@@ -328,14 +420,14 @@ export const getTodo: any = () => {
 };
 
 // dashboardData
-export const getDashboardData: any = (orgId: any) => {
+export const getDashboardData = (getListQuery: QueryFnType, orgId: any) => {
   return async () => {
     dispatch(slice.actions.setDashboardLoading());
     try {
       const response = await getListQuery('/company/dashboard/list', {
         org_id: orgId,
       });
-      const { success, data } = response.data;
+      const { success, data } = response?.data;
       if (success === 1) {
         dispatch(slice.actions.setDashboardData(data || EMPTY_ARRAY));
       } else {
@@ -348,7 +440,7 @@ export const getDashboardData: any = (orgId: any) => {
 };
 
 // supportData
-export const getSupportData: any = (orgId: any) => {
+export const getSupportData = (getListQuery: QueryFnType, orgId: any) => {
   return async () => {
     dispatch(slice.actions.setSupportLoading());
     try {
@@ -356,12 +448,12 @@ export const getSupportData: any = (orgId: any) => {
         org_id: orgId,
       });
 
-      if (response.data.success === 1) {
+      if (response?.data?.success === 1) {
         dispatch(
-          slice.actions.setSupportData(response.data.data || EMPTY_ARRAY)
+          slice.actions.setSupportData(response?.data.data || EMPTY_ARRAY)
         );
       } else {
-        dispatch(slice.actions.setSupportError(response.data?.data));
+        dispatch(slice.actions.setSupportError(response?.data?.data));
       }
     } catch (error) {
       dispatch(slice.actions.setSupportError(error));
@@ -370,7 +462,11 @@ export const getSupportData: any = (orgId: any) => {
 };
 
 // quickLinksData
-export const getQuickLinksData: any = (orgId: any, userId: any) => {
+export const getQuickLinksData = (
+  getListQuery: QueryFnType,
+  orgId: any,
+  userId: any
+) => {
   return async () => {
     dispatch(slice.actions.setQuickLinksLoading());
     try {
@@ -379,7 +475,7 @@ export const getQuickLinksData: any = (orgId: any, userId: any) => {
         c_companies_id: orgId,
         eligibility: 0,
       });
-      const { success, data } = response.data;
+      const { success, data } = response?.data;
       if (success === 1) {
         dispatch(slice.actions.setQuickLinksData(data || EMPTY_ARRAY));
       } else {
@@ -392,14 +488,14 @@ export const getQuickLinksData: any = (orgId: any, userId: any) => {
 };
 
 // upcommingData
-export const getupcommingData: any = (orgId: any) => {
+export const getupcommingData = (getListQuery: QueryFnType, orgId: any) => {
   return async () => {
     dispatch(slice.actions.setupcommingLoading());
     try {
       const response = await getListQuery('/user/dashboard', {
         org_id: orgId,
       });
-      const { success, data } = response.data;
+      const { success, data } = response?.data;
       if (success === 1) {
         dispatch(slice.actions.setupcommingData(data || EMPTY_ARRAY));
       } else {
@@ -412,14 +508,16 @@ export const getupcommingData: any = (orgId: any) => {
 };
 
 // paticipationSummaryData
-export const getPaticipationSummaryDashData: any = (props: any) => {
+export const getPaticipationSummaryDashData = (
+  getListQuery: QueryFnType,
+  props: any
+) => {
   return async () => {
-    dispatch(slice.actions.setPaticipationSummaryDashLoading());
     try {
       const response = await getListQuery('/campaign/front/current-campaigns', {
         ...props,
       });
-      const { success, data } = response.data;
+      const { success, data } = response?.data;
       if (success === 1) {
         dispatch(
           slice.actions.setPaticipationSummaryDashData(data || EMPTY_ARRAY)
@@ -433,17 +531,30 @@ export const getPaticipationSummaryDashData: any = (props: any) => {
   };
 };
 
-// campaignRewardDashData
-export const getCampaignRewardDashData: any = (props: any) => {
-  return async () => {
+export const getCampaignRewardDashData = (
+  getListQuery: QueryFnType,
+  props: any
+) => {
+  return async (dispatch: any, getState: any) => {
+    const { campaign_id } = props;
+    const existingData =
+      getState().campaign?.campaignRewardDashData[campaign_id];
+
+    if (existingData) return; // Avoid re-fetching if data exists
+
     dispatch(slice.actions.setCampaignRewardDashLoading());
     try {
       const response = await getListQuery('/campaign/front/campaign-rewards', {
         ...props,
       });
-      const { success, data } = response.data;
+      const { success, data } = response?.data;
       if (success === 1) {
-        dispatch(slice.actions.setCampaignRewardDashData(data || EMPTY_ARRAY));
+        dispatch(
+          slice.actions.setCampaignRewardDashData({
+            campaign_id,
+            data: data || EMPTY_ARRAY,
+          })
+        );
       } else {
         dispatch(slice.actions.hasCampaignRewardDashError(response?.data));
       }
@@ -454,14 +565,17 @@ export const getCampaignRewardDashData: any = (props: any) => {
 };
 
 // paticipationSummaryData
-export const getPaticipationSummaryData: any = (props: any) => {
+export const getPaticipationSummaryData = (
+  getListQuery: QueryFnType,
+  props: any
+) => {
   return async () => {
     dispatch(slice.actions.setPaticipationSummaryLoading());
     try {
       const response = await getListQuery('/campaign/front/current-campaigns', {
         ...props,
       });
-      const { success, data } = response.data;
+      const { success, data } = response?.data;
       if (success === 1) {
         dispatch(slice.actions.setPaticipationSummaryData(data || EMPTY_ARRAY));
       } else {
@@ -474,14 +588,17 @@ export const getPaticipationSummaryData: any = (props: any) => {
 };
 
 // campaignRewardData
-export const getCampaignRewardData: any = (props: any) => {
+export const getCampaignRewardData = (
+  getListQuery: QueryFnType,
+  props: any
+) => {
   return async () => {
     dispatch(slice.actions.setCampaignRewardLoading());
     try {
       const response = await getListQuery('/campaign/front/campaign-rewards', {
         ...props,
       });
-      const { success, data } = response.data;
+      const { success, data } = response?.data;
       if (success === 1) {
         dispatch(slice.actions.setCampaignRewardData(data || EMPTY_ARRAY));
       } else {
@@ -494,14 +611,14 @@ export const getCampaignRewardData: any = (props: any) => {
 };
 
 // getMyPlansData
-export const getMyPlansData: any = (props: any) => {
+export const getMyPlansData = (getListQuery: QueryFnType, props: any) => {
   return async () => {
     dispatch(slice.actions.setMyPlansLoading());
     try {
       const response = await getListQuery('/my-plan/assign-plan/plan', {
         ...props,
       });
-      const { success, data } = response.data;
+      const { success, data } = response?.data;
       if (success === 1) {
         dispatch(slice.actions.setMyPlansData(data || EMPTY_ARRAY));
       } else {
@@ -514,14 +631,14 @@ export const getMyPlansData: any = (props: any) => {
 };
 
 // getWidgetStatusData
-export const getWidgetStatusData: any = (props: any) => {
+export const getWidgetStatusData = (getListQuery: QueryFnType, props?: any) => {
   return async () => {
     dispatch(slice.actions.setWidgetStatusLoading());
     try {
       const response = await getListQuery('/user/widgetList', {
         ...props,
       });
-      const { success, data } = response.data;
+      const { success, data } = response?.data;
       if (success === 1) {
         dispatch(slice.actions.setWidgetStatusData(data || EMPTY_ARRAY));
       } else {
@@ -534,14 +651,14 @@ export const getWidgetStatusData: any = (props: any) => {
 };
 
 // getSpouseData
-export const getSpouseData: any = (props: any) => {
+export const getSpouseData = (getListQuery: QueryFnType, props: any) => {
   return async () => {
     dispatch(slice.actions.setSpouseLoading());
     try {
       const response = await getListQuery('/spouse/get-one', {
         ...props,
       });
-      const { success, data } = response.data;
+      const { success, data } = response?.data;
       if (success === 1) {
         dispatch(slice.actions.setSpouseData(data || EMPTY_ARRAY));
       } else {
@@ -549,6 +666,77 @@ export const getSpouseData: any = (props: any) => {
       }
     } catch (error) {
       dispatch(slice.actions.hasSpouseError(error));
+    }
+  };
+};
+
+export const getTopLeaderBoard = (getListQuery: QueryFnType, props: any) => {
+  return async () => {
+    dispatch(slice.actions.setTopLeaderBoardLoading());
+    try {
+      const response = await getListQuery(
+        '/campaign/front/campaign-leaderboard',
+        {
+          company_id: props,
+        }
+      );
+      const { success, data } = response?.data;
+      if (success === 1) {
+        dispatch(slice.actions.setTopLeaderBoardData(data || EMPTY_ARRAY));
+      } else {
+        dispatch(slice.actions.hasTopLeaderBoardError(response?.data));
+      }
+    } catch (error) {
+      dispatch(slice.actions.hasTopLeaderBoardError(error));
+    }
+  };
+};
+
+export const getActivites = (getListQuery: QueryFnType, props: any) => {
+  return async () => {
+    dispatch(slice.actions.setActivityLoading());
+    try {
+      const response = await getListQuery(
+        '/health-checkup/form-instructions/activities',
+        {
+          ...props,
+        }
+      );
+      const { success, data } = response?.data;
+      if (success === 1) {
+        dispatch(slice.actions.setActivityData(data || EMPTY_ARRAY));
+      } else {
+        dispatch(slice.actions.hasActivityError(response?.data));
+      }
+    } catch (error) {
+      dispatch(slice.actions.hasActivityError(error));
+    }
+  };
+};
+
+export const campaignCurrentPoints = (
+  getListQuery: QueryFnType,
+  props: any
+) => {
+  return async () => {
+    dispatch(slice.actions.setCampaignCurrentPointsLoading());
+    try {
+      const response = await getListQuery(
+        '/campaign/front/campaign-current-points',
+        {
+          ...props,
+        }
+      );
+      const { success, data } = response?.data;
+      if (success === 1) {
+        dispatch(
+          slice.actions.setCampaignCurrentPointsData(data || EMPTY_ARRAY)
+        );
+      } else {
+        dispatch(slice.actions.hasCampaignCurrentPointsError(response?.data));
+      }
+    } catch (error) {
+      dispatch(slice.actions.hasCampaignCurrentPointsError(error));
     }
   };
 };

@@ -11,7 +11,8 @@ import {
 import { REQUEST_CANCELED } from './constants';
 
 const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL ?? 'https://devapi.zomohealth.com',
+  baseURL:
+    process.env.NEXT_PUBLIC_API_URL ?? 'https://home-secuarity.vercel.app/api',
   // baseURL: 'http://192.168.1.96:3002',
 });
 
@@ -24,9 +25,8 @@ export const setSession = (
   accessToken: string | null,
   refreshToken: string | null
 ) => {
-  console.log(accessToken, 'login response');
-
   if (accessToken) {
+    console.log(accessToken, 'login response');
     setAccessToken(accessToken);
     // refreshToken && setRefreshToken(refreshToken);
     axiosInstance.defaults.headers.common.Authorization = `Bearer ${accessToken}`;

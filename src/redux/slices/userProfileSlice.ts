@@ -3,8 +3,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 // Redux
 import { dispatch } from '@/redux/store';
+import { QueryFnType } from '@/api';
 import { EMPTY_ARRAY } from '@/utils/constants';
-import { getDetails } from '@/api';
 
 interface InitialState {
   profileLoading: boolean;
@@ -40,12 +40,14 @@ const slice = createSlice({
 
 export default slice.reducer;
 
-export const getProfileDetails: any = () => {
+export const { setProfileData } = slice.actions;
+
+export const getProfileDetails = (getDetails: QueryFnType) => {
   return async () => {
     dispatch(slice.actions.setProfileLoading());
     try {
       const response = await getDetails('/user/get-profile');
-      const { success, data } = response.data;
+      const { success, data } = response?.data;
       if (success === 1) {
         dispatch(slice.actions.setProfileData(data || EMPTY_ARRAY));
       } else {

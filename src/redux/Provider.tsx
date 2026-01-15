@@ -1,9 +1,10 @@
-"use client";
+'use client';
 
-import { Provider as ReduxProvider } from "react-redux";
-import { PersistGate } from "redux-persist/integration/react";
-import type { Store } from "redux";
-import { persistor, store } from "@/redux/store";
+// Libraries
+import { Provider as ReduxProvider } from 'react-redux';
+import type { Store } from 'redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import { persistor, store } from '@/redux/store';
 
 function Providers({ children }: { children: React.ReactNode }) {
   return (
