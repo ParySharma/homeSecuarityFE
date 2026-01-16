@@ -13,6 +13,7 @@ import useAuth from '@/contexts/useAuth';
 import { useState } from 'react';
 import { useErrorToast, useServerToast } from '@/utils/serverError';
 import { BUTTON_TYPE, BUTTON_VARIANT_TYPE } from '@/utils/constants';
+import LoginAssets from '@/assets/login/login_Assets';
 
 const LoginSchema = Yup.object({
   mobile: Yup.string()
@@ -62,35 +63,64 @@ const Login = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundImage: 'url("/logo/login-bg.png")',
+          backgroundImage: 'url("/logo/login-bg4.jpg")',
+          backgroundSize: 'cover',
         }}
       >
+        <Box
+          position='absolute'
+          left={50}
+          top='50%'
+          sx={{
+            transform: 'translateY(-50%)',
+            animation: 'float 4s ease-in-out infinite',
+          }}
+        >
+          <LoginAssets />
+        </Box>
+
         <Paper
           elevation={0}
+          className='login-card'
           sx={{
             width: '100%',
             maxWidth: 400,
             p: 4,
-            borderRadius: 3,
+            borderRadius: 5,
             textAlign: 'center',
 
-            /* Glass effect */
             background: 'rgba(255, 255, 255, 0.2)',
             backdropFilter: 'blur(12px)',
             WebkitBackdropFilter: 'blur(12px)',
             border: '1px solid rgba(255, 255, 255, 0.3)',
             boxShadow: '0 8px 32px rgba(31, 38, 135, 0.15)',
+            position: 'relative',
+
+            animation: 'fadeUp 0.8s ease-out',
           }}
         >
           <Image
             src={'/logo/logo-3.png'}
             alt='Logo'
-            width={150}
-            height={150}
-            style={{ transform: 'rotate(3deg)' }}
+            width={100}
+            height={100}
+            style={{
+              transform: 'rotate(3deg)',
+              position: 'absolute',
+              top: '-70px',
+              left: 'calc(50% - 50px)',
+              transition: 'transform 0.3s ease',
+              cursor: 'pointer',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.animation = 'logoWobble 0.6s ease-in-out';
+            }}
+            onAnimationEnd={(e) => {
+              e.currentTarget.style.animation = '';
+            }}
           />
           <Typography
-            variant='h4'
+            variant='h5'
             fontWeight={600}
             textAlign='center'
             sx={{

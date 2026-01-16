@@ -69,3 +69,47 @@ thead th {
 .cursor-pointer {
   cursor: pointer;
 }
+
+/* Fade + slide for card */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Floating animation for left asset */
+@keyframes float {
+  0% {
+    transform: translateY(-50%) translateX(0);
+  }
+  50% {
+    transform: translateY(-55%) translateX(5px);
+  }
+  100% {
+    transform: translateY(-50%) translateX(0);
+  }
+}
+
+/* Logo hover wobble */
+@keyframes logoWobble {
+  0% {
+    transform: rotate(3deg) scale(1);
+  }
+  50% {
+    transform: rotate(-3deg) scale(1.05);
+  }
+  100% {
+    transform: rotate(3deg) scale(1);
+  }
+}
+
+/* Input focus glow */
+.glass-input:focus-within {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+  transition: box-shadow 0.3s ease;
+}

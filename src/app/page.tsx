@@ -9,8 +9,6 @@ import { getAccessToken, getUserMeta } from '@/utils/localStorage';
 import { NULL, USER_ROLES } from '@/utils/constants';
 
 const LandingPage = () => {
-  console.log('Landing Page');
-
   const router = useRouter();
   const pathname = usePathname();
   const accessToken = getAccessToken();

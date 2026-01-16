@@ -18,7 +18,6 @@ export const GuestGuard = ({
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get('redirect');
-  console.log(userRole, 'userRole in GuestGuard=======================');
 
   useLayoutEffect(() => {
     if (!isInitialized || !isAuthenticated) return;
