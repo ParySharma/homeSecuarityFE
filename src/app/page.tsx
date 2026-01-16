@@ -15,7 +15,6 @@ const LandingPage = () => {
   const pathname = usePathname();
   const accessToken = getAccessToken();
   const userDetails = getUserMeta();
-  console.log(accessToken, 'accessToken');
 
   useLayoutEffect(() => {
     if (!pathname.startsWith('/')) return;
@@ -24,15 +23,18 @@ const LandingPage = () => {
       router.push('/login');
       return;
     }
-
     switch (userDetails?.role) {
-      // case USER_ROLES.ADMIN:
-      //   return router.push(ORG_ROUTE.DASHBOARD);
+      case USER_ROLES.ADMIN:
+        router.push('/admin-dashboard');
+        break;
+      case USER_ROLES.GUARD:
+        router.push('/guard-dashboard');
+        break;
       case USER_ROLES.OWNER:
-        return router.push('/dashboard');
-
+        router.push('/owner-dashboard');
+        break;
       default:
-        return router.push('/dashboard');
+        router.push('/dashboard');
     }
   }, []);
 

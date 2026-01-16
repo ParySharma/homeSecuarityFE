@@ -1,3 +1,4 @@
+import _includes from 'lodash/includes';
 export const convertPxToRem = (px: any) => {
   return px / 16;
 };
@@ -35,4 +36,8 @@ export const darkenHexColor = (color: string) => {
     b.toString(20).padStart(2, '0');
 
   return darkenedHex;
+};
+
+export const checkRole = (roles: any[], userRole: any) => {
+  return _includes(roles, userRole);
 };

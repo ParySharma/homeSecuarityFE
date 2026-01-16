@@ -26,6 +26,7 @@ interface InitialState {
   userRole: number | null;
   companySettings: any;
   logoutFlag: boolean;
+  role: number | null;
 }
 
 const initialState: InitialState = {
@@ -35,6 +36,7 @@ const initialState: InitialState = {
   userRole: NULL,
   companySettings: NULL,
   logoutFlag: false,
+  role: NULL,
 };
 
 const handlers: any = {
@@ -52,6 +54,7 @@ const handlers: any = {
     user: NULL,
     userRole: NULL,
     logoutFlag: action.payload.logoutFlag,
+    role: NULL,
   }),
 };
 
@@ -71,26 +74,21 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // ✅ MEMOIZED INITIALIZE
   const initialize = useCallback(async () => {
-    console.log('Auth Initializing...');
-    debugger;
     try {
       const accessToken = getAccessToken();
       const refreshToken = getRefreshToken();
-      // const userMeta = getUserMeta();
+      const userMeta = getUserMeta();
       // const companySettings = getCompanySettings();
-      console.log('accessToken, userMeta', accessToken);
-
       if (accessToken) {
-        console.log('User is authenticated');
-
         setSession(accessToken, refreshToken);
 
         dispatch({
           type: 'INITIALIZE',
           payload: {
             isAuthenticated: true,
-            // user: userMeta,
-            // userRole: userMeta?.role_id,
+            user: userMeta,
+            userRole: userMeta?.role,
+            role: userMeta?.role,
             // companySettings,
           },
         });
@@ -105,6 +103,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
             user: NULL,
             userRole: NULL,
             companySettings: EMPTY_ARRAY,
+            role: NULL,
           },
         });
       }
@@ -147,8 +146,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       if (response?.data?.success) {
         const { user_meta, token, refreshToken } = response.data;
 
-        setUserMeta(response.data.data);
-        setLoginResponse(response.data.data);
+        setUserMeta(response.data);
+        setLoginResponse(response.data);
         setSession(token, 'refreshToken');
 
         // if (user_meta?.preferred_language) {

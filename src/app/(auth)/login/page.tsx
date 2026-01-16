@@ -39,7 +39,6 @@ const Login = () => {
         values.password,
         values.isActive
       );
-      console.log(response, 'login respons==========');
 
       if (response && response?.data?.success) {
         successToast(response?.data?.message || 'Login successful!');

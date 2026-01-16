@@ -26,7 +26,6 @@ export const setSession = (
   refreshToken: string | null
 ) => {
   if (accessToken) {
-    console.log(accessToken, 'login response');
     setAccessToken(accessToken);
     // refreshToken && setRefreshToken(refreshToken);
     axiosInstance.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
