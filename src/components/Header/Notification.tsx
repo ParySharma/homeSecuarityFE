@@ -65,14 +65,16 @@ const Notification = () => {
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
-        PaperProps={{
-          sx: {
-            mt: 1,
-            minWidth: 300,
-            bgcolor: 'var(--card-background-color)',
-            border: '1px solid var(--border-color)',
-            boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
-            borderRadius: 2,
+        slotProps={{
+          paper: {
+            sx: {
+              mt: 1,
+              minWidth: 300,
+              bgcolor: 'var(--card-background-color)',
+              border: '1px solid var(--border-color)',
+              boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+              borderRadius: 2,
+            },
           },
         }}
       >

@@ -1,4 +1,5 @@
 import _includes from 'lodash/includes';
+import { USER_ROLES } from './constants';
 export const convertPxToRem = (px: any) => {
   return px / 16;
 };
@@ -40,4 +41,29 @@ export const darkenHexColor = (color: string) => {
 
 export const checkRole = (roles: any[], userRole: any) => {
   return _includes(roles, userRole);
+};
+
+export const getMenuItems = (role: string) => {
+  switch (role) {
+    case USER_ROLES.ADMIN:
+      return [
+        { id: 1, label: 'Dashboard', path: '/admin-dashboard' },
+        { id: 2, label: 'Add Guest', path: '/add-guest' },
+        { id: 3, label: 'Guests List', path: '/guests-list' },
+      ];
+    case USER_ROLES.OWNER:
+      return [
+        { id: 1, label: 'Dashboard', path: '/owner-dashboard' },
+        { id: 2, label: 'Add Guest', path: '/add-guest' },
+        { id: 3, label: 'Guests List', path: '/guests-list' },
+      ];
+    case USER_ROLES.GUARD:
+      return [
+        { id: 1, label: 'Dashboard', path: '/guard-dashboard' },
+        { id: 2, label: 'Add Guest', path: '/add-guest' },
+        { id: 3, label: 'Guests List', path: '/guests-list' },
+      ];
+    default:
+      return [];
+  }
 };

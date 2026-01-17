@@ -1,42 +1,25 @@
 'use client';
 
 import React, { useState } from 'react';
-import { AppBar, Toolbar, Button, Box, Typography } from '@mui/material';
-import { useRouter } from 'next/navigation';
+import { AppBar, Toolbar, Button, Box } from '@mui/material';
+import { useRouter, usePathname } from 'next/navigation';
 import useAuth from '@/contexts/useAuth';
-import { USER_ROLES } from '@/utils/constants';
+import { getMenuItems } from '@/utils/commonFunction';
+import _map from 'lodash/map';
 
-const HeaderMenu = () => {
+interface HeaderMenuProps {
+  variant?: 'desktop' | 'mobile';
+  onItemClick?: () => void;
+}
+
+const HeaderMenu = ({ variant = 'desktop', onItemClick }: HeaderMenuProps) => {
   const router = useRouter();
+  const pathname = usePathname();
   const { userRole } = useAuth();
-  const [selectedMenu, setSelectedMenu] = useState<number | null>(1);
-
-  const getMenuItems = (role: string) => {
-    switch (role) {
-      case USER_ROLES.ADMIN:
-        return [
-          { id: 1, label: 'Dashboard', path: '/admin-dashboard' },
-          { id: 2, label: 'Add Guest', path: '/add-guest' },
-          { id: 3, label: 'Guests List', path: '/guests-list' },
-        ];
-      case USER_ROLES.OWNER:
-        return [
-          { id: 1, label: 'Dashboard', path: '/owner-dashboard' },
-          { id: 2, label: 'Add Guest', path: '/add-guest' },
-          { id: 3, label: 'Guests List', path: '/guests-list' },
-        ];
-      case USER_ROLES.GUARD:
-        return [
-          { id: 1, label: 'Dashboard', path: '/guard-dashboard' },
-          { id: 2, label: 'Add Guest', path: '/add-guest' },
-          { id: 3, label: 'Guests List', path: '/guests-list' },
-        ];
-      default:
-        return [];
-    }
-  };
 
   const menuItems = getMenuItems(userRole || '');
+
+  const isMobile = variant === 'mobile';
 
   return (
     <AppBar
@@ -47,31 +30,60 @@ const HeaderMenu = () => {
         boxShadow: 'none',
       }}
     >
-      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          {menuItems.map((item) => {
+      <Toolbar
+        sx={{
+          display: 'flex',
+          flexDirection: isMobile ? 'column' : 'row',
+          alignItems: isMobile ? 'flex-start' : 'center',
+          gap: isMobile ? 1 : 2,
+          px: isMobile ? 0 : 2,
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: isMobile ? 'column' : 'row',
+            width: '100%',
+          }}
+        >
+          {_map(menuItems, (item) => {
+            const isActive = pathname === item?.path;
+
             return (
               <Button
-                key={item.id}
+                key={item?.id}
+                fullWidth={isMobile}
                 onClick={() => {
-                  setSelectedMenu(item.id);
-                  router.push(item.path);
+                  router.push(item?.path);
+                  onItemClick?.();
                 }}
                 sx={{
-                  color: 'var(--body-text-color)',
+                  justifyContent: isMobile ? 'flex-start' : 'center',
+                  textAlign: 'left',
+                  px: isMobile ? 2 : 1.5,
+                  py: 1,
+                  color: isActive
+                    ? 'var(--primary-button-background-color)'
+                    : 'var(--body-text-color)',
                   textTransform: 'none',
-                  fontSize: '1.2rem',
-                  fontWeight: selectedMenu === item.id ? 700 : 500,
+                  fontSize: '1rem',
+                  fontWeight: isActive ? 700 : 500,
+                  borderRight:
+                    isMobile && isActive
+                      ? '4px solid var(--primary-button-background-color)'
+                      : 'none',
                   borderBottom:
-                    selectedMenu === item.id
+                    !isMobile && isActive
                       ? '2px solid var(--primary-button-background-color)'
                       : 'none',
+                  borderRadius: isMobile ? 2 : 0,
                   '&:hover': {
                     backgroundColor: 'var(--primary-button-back-opacity)',
+                    color: '#fff',
                   },
                 }}
               >
-                {item.label}
+                {item?.label}
               </Button>
             );
           })}
