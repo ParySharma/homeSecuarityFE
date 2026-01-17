@@ -1,27 +1,75 @@
-/* globals.css */
 :root {
+  /* ================= Base ================= */
+  --body-background-color: #f4f7f6;
+  --body-text-color: #0f172a;
 
-  --body-background-color: #ffffff;
-  --body-text-color: #000000;
-  --primary-button-background-color: #07b98f;
+  /* ================= Brand / Primary ================= */
+  --primary-button-background-color: #10b981; /* mint green */
   --primary-button-text-color: #ffffff;
-  --primary-button-back-opacity:  rgba(7, 185, 143, 0.5);
-  
-  }
-  
-[data-theme='dark'] {
-  
-  --body-background-color: #121212;
-  --body-text-color: #e0e0e0;
-  --primary-button-background-color: #1a73e8;
-  --primary-button-text-color: #ffffff;
-  --primary-button-back-opacity: rgba(26, 115, 232, 0.5);
+  --primary-button-back-opacity: rgba(16, 185, 129, 0.45);
+
+  /* ================= Header ================= */
+  --header-background-color: rgba(16, 185, 129, 0.86);
+  --header-text-color: #ffffff;
+  --header-border-color: rgba(15, 23, 42, 0.08);
+  --header-shadow-color: rgba(0, 0, 0, 0.12);
+
+  /* ================= Text ================= */
+  --text-secondary-color: #475569;
+  --text-muted-color: #64748b;
+
+  /* ================= UI ================= */
+  --card-background-color: #ffffff;
+  --border-color: #e2e8f0;
+  --divider-color: #e5e7eb;
+
+  /* ================= Status ================= */
+  --success-color: #16a34a;
+  --warning-color: #f59e0b;
+  --error-color: #ef4444;
 }
+
+
+
+[data-theme='dark'] {
+  /* ================= Base ================= */
+  --body-background-color: #062f2e; /* deep teal */
+  --body-text-color: #e6fffa;
+
+  /* ================= Brand / Primary ================= */
+  --primary-button-background-color: #10b981;
+  --primary-button-text-color: #ffffff;
+  --primary-button-back-opacity: rgba(16, 185, 129, 0.5);
+
+  /* ================= Header ================= */
+  --header-background-color: rgba(14, 102, 84, 0.82);
+  --header-text-color: #e6fffa;
+  --header-border-color: rgba(255, 255, 255, 0.14);
+  --header-shadow-color: rgba(0, 0, 0, 0.45);
+
+  /* ================= Text ================= */
+  --text-secondary-color: #9ff3e3;
+  --text-muted-color: #7dd3c7;
+
+  /* ================= UI ================= */
+  --card-background-color: rgba(255, 255, 255, 0.12);
+  --border-color: rgba(255, 255, 255, 0.18);
+  --divider-color: rgba(255, 255, 255, 0.12);
+
+  /* ================= Status ================= */
+  --success-color: #22c55e;
+  --warning-color: #fbbf24;
+  --error-color: #f87171;
+}
+
+
+
 
 *,
 *:before,
 *:after {
   box-sizing: border-box;
+  line-height: 0.2rem
 }
 
 body {

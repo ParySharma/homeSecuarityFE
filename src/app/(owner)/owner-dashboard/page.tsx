@@ -7,7 +7,7 @@ const Dashbaord = () => {
   const { logout } = useAuth();
   return (
     <div>
-      <Typography variant='h4'>Dashboard</Typography>
+      {/* <Typography variant='h4'>Dashboard</Typography>
       <Button
         variant='contained'
         color='primary'
@@ -16,7 +16,7 @@ const Dashbaord = () => {
         }}
       >
         log out
-      </Button>
+      </Button> */}
     </div>
   );
 };

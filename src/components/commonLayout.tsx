@@ -9,6 +9,7 @@ import { SCREEN_SOLUTION, USER_ROLES } from '@/utils/constants';
 import { AuthGuard } from '@/guard/AuthGuard';
 import { checkRole } from '@/utils/commonFunction';
 import UserRoleGuard from '@/guard/UserRoleGuard';
+import Header from './Header';
 
 export default function CommonLayout({
   children,
@@ -46,7 +47,7 @@ export default function CommonLayout({
       {/* <LanguageProvider> */}
       {/* <PopupModels> */}
       <UserRoleGuard>
-        {/* <Header /> */}
+        <Header />
         {/* <Container
               component={'main'}
               sx={{

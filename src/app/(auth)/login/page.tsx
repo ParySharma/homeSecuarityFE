@@ -14,6 +14,8 @@ import { useState } from 'react';
 import { useErrorToast, useServerToast } from '@/utils/serverError';
 import { BUTTON_TYPE, BUTTON_VARIANT_TYPE } from '@/utils/constants';
 import LoginAssets from '@/assets/login/login_Assets';
+import moment from 'moment';
+import LoginAssets1 from '@/assets/login/login_Assets1';
 
 const LoginSchema = Yup.object({
   mobile: Yup.string()
@@ -65,6 +67,8 @@ const Login = () => {
           justifyContent: 'center',
           backgroundImage: 'url("/logo/login-bg4.jpg")',
           backgroundSize: 'cover',
+          padding: 2,
+          backgroundRepeat: 'no-repeat',
         }}
       >
         <Box
@@ -73,7 +77,8 @@ const Login = () => {
           top='50%'
           sx={{
             transform: 'translateY(-50%)',
-            animation: 'float 4s ease-in-out infinite',
+            // animation: 'float 4s ease-in-out infinite',
+            display: { xs: 'none', md: 'block' },
           }}
         >
           <LoginAssets />
@@ -108,7 +113,7 @@ const Login = () => {
               transform: 'rotate(3deg)',
               position: 'absolute',
               top: '-70px',
-              left: 'calc(50% - 50px)',
+              left: 'calc(50% - 55px)',
               transition: 'transform 0.3s ease',
               cursor: 'pointer',
             }}
@@ -131,38 +136,52 @@ const Login = () => {
           >
             Login
           </Typography>
-
-          {/* IMPORTANT: use form tag with handleSubmit */}
-          <ContactNumberField
-            formik={formik}
-            name='mobile'
-            label='Contact Number'
-            placeholder='Enter your contact number'
-          />
-
-          <PasswordField formik={formik} name='password' label='Password' />
-
-          <Box textAlign={'left'}>
-            <CommonSwitchField
+          <form onSubmit={formik.handleSubmit}>
+            {/* IMPORTANT: use form tag with handleSubmit */}
+            <ContactNumberField
               formik={formik}
-              name='isActive'
-              label='Remember me'
+              name='mobile'
+              label='Contact Number'
+              placeholder='Enter your contact number'
+              inputTextColor='white'
             />
-          </Box>
 
-          <ButtonStyled
-            type={BUTTON_TYPE.SUBMIT}
-            variant={BUTTON_VARIANT_TYPE.OUTLINED}
-            text='Login'
-            onClick={() => {
-              formik.handleSubmit();
-              console.log('Login button clicked');
-            }}
-            mt={1.2}
-            fullWidth
-            width='100%'
-            loading={loading}
-          />
+            <PasswordField
+              formik={formik}
+              name='password'
+              label='Password'
+              inputTextColor='white'
+            />
+
+            <Box textAlign={'left'}>
+              <CommonSwitchField
+                formik={formik}
+                name='isActive'
+                label='Remember me'
+                labelColor='white'
+              />
+            </Box>
+
+            <ButtonStyled
+              type={BUTTON_TYPE.SUBMIT}
+              variant={BUTTON_VARIANT_TYPE.OUTLINED}
+              text='Login'
+              // onClick={() => {
+              //   formik.handleSubmit();
+              //   console.log('Login button clicked');
+              // }}
+              mt={1.2}
+              fullWidth
+              width='100%'
+              loading={loading}
+            />
+          </form>
+          <Typography variant='body2' mt={2} sx={{ color: 'white' }}>
+            {moment().format('YYYY')}© Home Security |{' '}
+            <a href='./privacy-policy' target='_blank'>
+              Privacy Policy
+            </a>
+          </Typography>
         </Paper>
       </Box>
     </>

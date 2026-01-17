@@ -6,6 +6,7 @@ type Props = {
   formik: any;
   name: string;
   label?: string;
+  labelColor?: string;
   disabled?: boolean;
 };
 
@@ -53,13 +54,14 @@ const CommonSwitchField = ({
   formik,
   name,
   label,
+  labelColor,
   disabled = false,
 }: Props) => {
   return (
     <FormControlLabel
       label={label}
       sx={{
-        color: 'var(--body-text-color)',
+        color: labelColor || 'var(--body-text-color)',
         marginLeft: 0,
         gap: 1.2,
       }}

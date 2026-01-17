@@ -2,6 +2,7 @@
 import type { Metadata } from 'next';
 import { Epilogue, Roboto } from 'next/font/google';
 import '@/styles/globals.css';
+import '@/styles/common.scss';
 import AuthProvider from '@/contexts/Provider';
 import SnackbarProvider from '@/app/snackbarProvider';
 import ReduxProvider from '@/redux/Provider';

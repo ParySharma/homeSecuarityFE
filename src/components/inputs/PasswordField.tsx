@@ -3,66 +3,21 @@ import { TextField, IconButton, InputAdornment } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Password from '@mui/icons-material/Password';
-
-/* Styled TextField */
-const StyledTextField = styled(TextField)`
-  .MuiOutlinedInput-root {
-    // background-color: var(--body-background-color);
-    color: var(--body-text-color);
-
-    fieldset {
-      border-color: var(--primary-button-back-opacity);
-    }
-
-    &:hover fieldset {
-      border-color: var(--primary-button-background-color);
-    }
-
-    &.Mui-focused fieldset {
-      border-color: var(--primary-button-background-color);
-      border-width: 2px;
-    }
-  }
-
-  /* Label */
-  .MuiInputLabel-root {
-    color: var(--body-text-color);
-  }
-
-  .MuiInputLabel-root.Mui-focused {
-    color: var(--primary-button-background-color);
-  }
-
-  /* Icons */
-  .MuiInputAdornment-root svg {
-    color: var(--primary-button-background-color);
-  }
-
-  .MuiIconButton-root {
-    color: var(--primary-button-background-color);
-  }
-
-  /* Helper text */
-  .MuiFormHelperText-root {
-    color: var(--body-text-color);
-  }
-
-  .MuiFormHelperText-root.Mui-error {
-    color: #d32f2f;
-  }
-`;
+import { StyledTextField } from '../componentStyles';
 
 const PasswordField = ({
   formik,
   name = 'password',
   label = 'Password',
   placeholder = 'Enter password',
+  inputTextColor,
   ...props
 }: {
   formik: any;
   name?: string;
   label?: string;
   placeholder?: string;
+  inputTextColor?: string;
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -73,6 +28,7 @@ const PasswordField = ({
       label={label}
       name={name}
       placeholder={placeholder}
+      inputTextColor={inputTextColor}
       margin='normal'
       value={formik.values[name] || ''}
       onChange={formik.handleChange}
