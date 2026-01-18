@@ -13,10 +13,12 @@
   --header-text-color: #ffffff;
   --header-border-color: rgba(15, 23, 42, 0.08);
   --header-shadow-color: rgba(0, 0, 0, 0.12);
+  --table-header-background-color: rgba(16, 185, 129);
 
   /* ================= Text ================= */
   --text-secondary-color: #475569;
   --text-muted-color: #64748b;
+  --placeholder-color: #94a3b8;
 
   /* ================= UI ================= */
   --card-background-color: #ffffff;
@@ -39,17 +41,19 @@
   /* ================= Brand / Primary ================= */
   --primary-button-background-color: #10b981;
   --primary-button-text-color: #ffffff;
-  --primary-button-back-opacity: rgba(16, 185, 129, 0.5);
+  --primary-button-back-opacity: rgba(16, 185, 129);
 
   /* ================= Header ================= */
   --header-background-color: rgba(14, 102, 84, 0.82);
   --header-text-color: #e6fffa;
   --header-border-color: rgba(255, 255, 255, 0.14);
   --header-shadow-color: rgba(0, 0, 0, 0.45);
+  --table-header-background-color: rgba(14, 102, 84, 0.6);
 
   /* ================= Text ================= */
   --text-secondary-color: #9ff3e3;
   --text-muted-color: #7dd3c7;
+  --placeholder-color: #5eead4;
 
   /* ================= UI ================= */
   --card-background-color: rgba(255, 255, 255, 0.12);

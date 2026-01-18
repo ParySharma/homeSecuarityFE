@@ -11,11 +11,7 @@ const Dashbaord = () => {
   const data = visitorsMockData;
 
   return (
-    <Box
-      sx={{
-        padding: 4,
-      }}
-    >
+    <Box>
       <CommonDashboard data={data} />
     </Box>
   );

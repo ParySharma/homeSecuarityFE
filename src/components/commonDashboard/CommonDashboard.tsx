@@ -8,6 +8,7 @@ import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import DashCards from './components/DashCards';
 import CommonTable from '../table/CommonTable';
 import DashStatusTableList from './components/DashStatusTableList';
+import CardComponent from '../Card';
 
 const CommonDashboard = ({ data }: { data: any[] }) => {
   const countMap = {
@@ -54,27 +55,36 @@ const CommonDashboard = ({ data }: { data: any[] }) => {
     <Box>
       {/* Dashboard Cards */}
       <DashCards countMap={countMap} />
+
       {/* Pending Visitors List */}
-      <DashStatusTableList
-        title='Pending Visitors'
-        data={pendingList}
-        columns={columns}
-        color={'#ffd200'}
-      />
+      <CardComponent sx={{ mt: 2.5 }}>
+        <DashStatusTableList
+          title='Pending Visitors'
+          data={pendingList}
+          columns={columns}
+          color={'#ffd200'}
+        />
+      </CardComponent>
+
       {/* Approved Visitors List */}
-      <DashStatusTableList
-        title='Approved Visitors'
-        data={approvedList}
-        columns={columns}
-        color={'#185a9d'}
-      />
+      <CardComponent sx={{ mt: 2.5 }}>
+        <DashStatusTableList
+          title='Approved Visitors'
+          data={approvedList}
+          columns={columns}
+          color={'#185a9d'}
+        />
+      </CardComponent>
+
       {/* Rejected Visitors List */}
-      <DashStatusTableList
-        title='Rejected Visitors'
-        data={rejectedList}
-        columns={columns}
-        color={'#ff4b2b'}
-      />
+      <CardComponent sx={{ mt: 2.5 }}>
+        <DashStatusTableList
+          title='Rejected Visitors'
+          data={rejectedList}
+          columns={columns}
+          color={'#ff4b2b'}
+        />
+      </CardComponent>
     </Box>
   );
 };

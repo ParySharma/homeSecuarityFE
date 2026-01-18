@@ -36,15 +36,15 @@ const ContactNumberField = ({
           ),
         },
       }}
-      value={formik.values?.[name] ?? ''}
+      value={formik?.values?.[name] ?? ''}
       onChange={(e) => {
-        const value = e.target.value.replace(/\D/g, '');
-        if (value.length <= 10) {
-          formik.setFieldValue(name, value);
+        const value = e?.target?.value?.replace(/\D/g, '');
+        if (value?.length <= 10) {
+          formik?.setFieldValue(name, value);
         }
       }}
-      error={Boolean(formik.touched?.[name] && formik.errors?.[name])}
-      helperText={formik.touched?.[name] && formik.errors?.[name]}
+      error={Boolean(formik?.touched?.[name] && formik?.errors?.[name])}
+      helperText={formik?.touched?.[name] && formik?.errors?.[name]}
       inputTextColor={inputTextColor}
       {...props}
     />

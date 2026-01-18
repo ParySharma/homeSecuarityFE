@@ -25,7 +25,7 @@ const DashStatusTableList = ({
 }) => {
   return (
     <div>
-      <Stack direction={'row'} spacing={2} mt={{ xs: 3, md: 4 }} mb={1}>
+      <Stack direction={'row'} spacing={2} mb={1}>
         <Divider
           orientation='vertical'
           variant='middle'

@@ -27,7 +27,7 @@ export const StyledTextField = styled(TextField)<StyledTextFieldProps>(
 
     /* Label */
     '& .MuiInputLabel-root': {
-      color: 'var(--card-background-color)',
+      color: 'var(--placeholder-color)',
     },
 
     '& .MuiInputLabel-root.Mui-focused': {
@@ -46,6 +46,17 @@ export const StyledTextField = styled(TextField)<StyledTextFieldProps>(
 
     '& .MuiFormHelperText-root.Mui-error': {
       color: '#d32f2f',
+    },
+    /* Chrome, Safari, Edge */
+    '& input[type=number]::-webkit-outer-spin-button, & input[type=number]::-webkit-inner-spin-button':
+      {
+        WebkitAppearance: 'none',
+        margin: 0,
+      },
+
+    /* Firefox */
+    '& input[type=number]': {
+      MozAppearance: 'textfield',
     },
   })
 );

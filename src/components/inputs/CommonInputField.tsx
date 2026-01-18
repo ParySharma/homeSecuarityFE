@@ -1,6 +1,9 @@
 import React from 'react';
 import { TextField, MenuItem, InputAdornment } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { StyledTextField } from '../componentStyles';
+import _map from 'lodash/map';
+import _size from 'lodash/size';
 
 type OptionType = {
   label: string;
@@ -12,7 +15,7 @@ type Props = {
   name: string;
   label?: string;
   placeholder?: string;
-  type?: string;
+  type?: any;
   select?: boolean;
   options?: OptionType[];
   startIcon?: React.ReactNode;
@@ -20,57 +23,11 @@ type Props = {
   multiline?: boolean;
   rows?: number;
   disabled?: boolean;
+  inputTextColor?: string;
+  maxDigits?: number;
+  endIconClick?: () => void;
+  endIconStyle?: React.CSSProperties;
 };
-
-const StyledTextField = styled(TextField)`
-  /* Root */
-  .MuiOutlinedInput-root {
-    // background-color: var(--body-background-color);
-    color: var(--body-text-color);
-
-    fieldset {
-      border-color: var(--primary-button-back-opacity);
-    }
-
-    &:hover fieldset {
-      border-color: var(--primary-button-background-color);
-    }
-
-    &.Mui-focused fieldset {
-      border-color: var(--primary-button-background-color);
-      border-width: 0.125rem;
-    }
-  }
-
-  /* Label */
-  .MuiInputLabel-root {
-    color: var(--body-text-color);
-  }
-
-  .MuiInputLabel-root.Mui-focused {
-    color: var(--primary-button-background-color);
-  }
-
-  /* Helper text */
-  .MuiFormHelperText-root {
-    color: var(--body-text-color);
-  }
-
-  .MuiFormHelperText-root.Mui-error {
-    color: #d32f2f;
-  }
-
-  /* Icons */
-  .MuiInputAdornment-root svg {
-    color: var(--primary-button-background-color);
-  }
-
-  /* Textarea specific */
-  .MuiOutlinedInput-root textarea {
-    line-height: 1.6;
-    resize: vertical;
-  }
-`;
 
 const CommonInputField = ({
   formik,
@@ -85,8 +42,39 @@ const CommonInputField = ({
   multiline = false,
   rows = 3,
   disabled = false,
+  inputTextColor,
+  maxDigits,
+  endIconClick,
+  endIconStyle,
   ...props
 }: Props) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value;
+
+    // Numeric fields only
+    if (type === 'number' || type === 'tel') {
+      // Remove everything except digits
+      value = value.replace(/[^0-9]/g, '');
+
+      // Stop negative values explicitly
+      if (
+        value.startsWith('-') ||
+        value === '-' ||
+        value === '+' ||
+        value === '0'
+      ) {
+        return;
+      }
+
+      // Apply digit limit
+      if (maxDigits && value.length > maxDigits) {
+        return;
+      }
+    }
+
+    formik.setFieldValue(name, value);
+  };
+
   return (
     <StyledTextField
       fullWidth
@@ -100,25 +88,39 @@ const CommonInputField = ({
       rows={multiline ? rows : undefined}
       disabled={disabled}
       value={formik.values?.[name] ?? ''}
-      onChange={formik.handleChange}
+      onChange={handleChange}
       onBlur={formik.handleBlur}
-      error={formik.touched?.[name] && Boolean(formik.errors?.[name])}
+      error={Boolean(formik.touched?.[name] && formik.errors?.[name])}
       helperText={formik.touched?.[name] && formik.errors?.[name]}
       slotProps={{
         input: {
+          inputMode: type === 'number' || type === 'tel' ? 'numeric' : 'text',
           startAdornment: startIcon ? (
             <InputAdornment position='start'>{startIcon}</InputAdornment>
           ) : undefined,
           endAdornment: endIcon ? (
-            <InputAdornment position='end'>{endIcon}</InputAdornment>
+            <InputAdornment
+              position='end'
+              onClick={endIconClick}
+              style={{
+                ...endIconStyle,
+                marginRight: select ? '20px' : undefined,
+              }}
+            >
+              {endIcon}
+            </InputAdornment>
           ) : undefined,
         },
       }}
       {...props}
     >
       {select &&
-        options.map((option) => (
-          <MenuItem key={option.value} value={option.value}>
+        _map(options, (option) => (
+          <MenuItem
+            key={option.value}
+            value={option.value}
+            disabled={option.value === ''}
+          >
             {option.label}
           </MenuItem>
         ))}
