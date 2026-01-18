@@ -12,6 +12,7 @@ import AddFormSvg from '@/assets/forms/addForm';
 import CommonInputField from '@/components/inputs/CommonInputField';
 import CardComponent from '@/components/Card';
 import { useApiQueries } from '@/api';
+import { RootState, useSelector } from '@/redux/store';
 
 const vehicalTypeOptions = [
   { value: 'CAR', label: 'Car' },
@@ -19,8 +20,17 @@ const vehicalTypeOptions = [
   { value: 'AUTO', label: 'Auto' },
 ];
 
-const AddGuestForm = () => {
+const AddGuestForm = ({
+  handleGetSocietyList,
+  societyList,
+}: {
+  handleGetSocietyList: () => void;
+  societyList: any[];
+}) => {
+  const { getHouseListingLoading, getHouseListingData, getHouseListingError } =
+    useSelector((state: RootState) => state.commonSlice);
   const { addUpdateQuery, getListQuery } = useApiQueries();
+  console.log(societyList, 'societyListsocietyListsocietyList');
 
   const formik = useFormik({
     initialValues: {
@@ -30,6 +40,8 @@ const AddGuestForm = () => {
       vehicle_type: '',
       vehicle_number: '',
       purpose: '',
+      society_id: '',
+      house_id: '',
     },
     validationSchema: Yup.object({
       visitor_name: Yup.string().required('Visitor name is required'),
@@ -47,6 +59,8 @@ const AddGuestForm = () => {
             : schema.notRequired();
         }
       ),
+      society_id: Yup.string().required('Society is required'),
+      house_id: Yup.string().required('House is required'),
     }),
     validateOnBlur: false,
     validateOnChange: false,
@@ -99,26 +113,55 @@ const AddGuestForm = () => {
                 type='tel'
                 maxDigits={10}
               />
+              <Stack direction='row' spacing={2}>
+                <CommonInputField
+                  formik={formik}
+                  name='vehicle_type'
+                  placeholder='Vehicle Type'
+                  label='Vehicle Type'
+                  select
+                  options={vehicalTypeOptions}
+                  endIcon={formik?.values.vehicle_type ? '✖' : undefined}
+                  endIconClick={() => formik.setFieldValue('vehicle_type', '')}
+                  endIconStyle={{ cursor: 'pointer' }}
+                />
+                <CommonInputField
+                  formik={formik}
+                  name='number_of_visitors'
+                  placeholder='Number of Visitors'
+                  type='number'
+                  maxDigits={4}
+                />
+              </Stack>
 
-              <CommonInputField
-                formik={formik}
-                name='number_of_visitors'
-                placeholder='Number of Visitors'
-                type='number'
-                maxDigits={4}
-              />
-
-              <CommonInputField
-                formik={formik}
-                name='vehicle_type'
-                placeholder='Vehicle Type'
-                label='Vehicle Type'
-                select
-                options={vehicalTypeOptions}
-                endIcon={formik?.values.vehicle_type ? '✖' : undefined}
-                endIconClick={() => formik.setFieldValue('vehicle_type', '')}
-                endIconStyle={{ cursor: 'pointer' }}
-              />
+              <Stack direction='row' spacing={2}>
+                <CommonInputField
+                  formik={formik}
+                  name='society_id'
+                  placeholder='Select Society'
+                  label='Society'
+                  select
+                  options={societyList}
+                  obJectKeys={'name'}
+                  endIcon={formik?.values.society_id ? '✖' : undefined}
+                  endIconClick={() => formik.setFieldValue('society_id', '')}
+                  endIconStyle={{ cursor: 'pointer' }}
+                  onDropdownOpen={() => {
+                    handleGetSocietyList();
+                  }}
+                />
+                <CommonInputField
+                  formik={formik}
+                  name='house_id'
+                  placeholder='Select House'
+                  label='House'
+                  select
+                  options={vehicalTypeOptions}
+                  endIcon={formik?.values.house_id ? '✖' : undefined}
+                  endIconClick={() => formik.setFieldValue('house_id', '')}
+                  endIconStyle={{ cursor: 'pointer' }}
+                />
+              </Stack>
 
               {formik?.values.vehicle_type && (
                 <CommonInputField

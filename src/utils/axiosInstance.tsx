@@ -13,7 +13,7 @@ import { REQUEST_CANCELED } from './constants';
 const axiosInstance = axios.create({
   baseURL:
     process.env.NEXT_PUBLIC_API_URL ?? 'https://home-secuarity.vercel.app/api',
-  // baseURL: 'http://192.168.1.96:3002',
+  // baseURL: 'http://localhost:5000/api',
 });
 
 axiosInstance.interceptors.response.use(

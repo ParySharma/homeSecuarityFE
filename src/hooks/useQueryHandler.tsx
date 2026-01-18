@@ -1,5 +1,6 @@
 // Libraries
 import { useAuthUtils } from '@/hooks/useAuthUtils';
+import { log } from 'console';
 
 const pendingRequests: Map<string, Promise<any>> = new Map();
 
@@ -11,7 +12,6 @@ const generateRequestKey = (method: string, url: string, data: any) => {
 
 export const useQueryHandler = () => {
   const { retryFailedRequest, getNewToken } = useAuthUtils();
-  console.log('useQueryHandler initialized', retryFailedRequest, getNewToken);
 
   const handleTokenExpiration = async (
     error: any,
@@ -19,14 +19,6 @@ export const useQueryHandler = () => {
     data: any,
     method: string = 'post'
   ) => {
-    console.log(
-      'Handling token expiration for error:',
-      error,
-      url,
-      data,
-      method
-    );
-
     const status = error?.response?.status || error?.status;
     if (status === 401) {
       if (!refreshingTokenPromise) {
@@ -51,6 +43,7 @@ export const useQueryHandler = () => {
   };
 
   const handleQuery = async (method: string, url: string, data?: any) => {
+    console.log('Handling query:', method, url, data);
     const key = generateRequestKey(method, url, data);
 
     // Return pending request if already in progress
@@ -66,7 +59,7 @@ export const useQueryHandler = () => {
         pendingRequests.delete(key); // Clean up after completion
       }
     })();
-
+    console.log(requestPromise, 'Storing pending request for key:', key);
     pendingRequests.set(key, requestPromise);
     return requestPromise;
   };

@@ -4,6 +4,7 @@ import { styled } from '@mui/material/styles';
 import { StyledTextField } from '../componentStyles';
 import _map from 'lodash/map';
 import _size from 'lodash/size';
+import _isEmpty from 'lodash/isEmpty';
 
 type OptionType = {
   label: string;
@@ -27,6 +28,9 @@ type Props = {
   maxDigits?: number;
   endIconClick?: () => void;
   endIconStyle?: React.CSSProperties;
+  onDropdownOpen?: () => void;
+  loading?: boolean;
+  obJectKeys?: string | null;
 };
 
 const CommonInputField = ({
@@ -46,6 +50,9 @@ const CommonInputField = ({
   maxDigits,
   endIconClick,
   endIconStyle,
+  onDropdownOpen,
+  loading = false,
+  obJectKeys,
   ...props
 }: Props) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,8 +78,15 @@ const CommonInputField = ({
         return;
       }
     }
-
     formik.setFieldValue(name, value);
+  };
+
+  const handleOpen = () => {
+    (async () => {
+      if (onDropdownOpen && _size(options) === 0) {
+        onDropdownOpen();
+      }
+    })();
   };
 
   return (
@@ -92,6 +106,7 @@ const CommonInputField = ({
       onBlur={formik.handleBlur}
       error={Boolean(formik.touched?.[name] && formik.errors?.[name])}
       helperText={formik.touched?.[name] && formik.errors?.[name]}
+      // SelectProps={select ? { onOpen: handleOpen } : undefined}
       slotProps={{
         input: {
           inputMode: type === 'number' || type === 'tel' ? 'numeric' : 'text',
@@ -111,17 +126,20 @@ const CommonInputField = ({
             </InputAdornment>
           ) : undefined,
         },
+        select: {
+          onOpen: select ? handleOpen : undefined,
+        },
       }}
       {...props}
     >
       {select &&
-        _map(options, (option) => (
+        _map(options, (option: any) => (
           <MenuItem
             key={option.value}
             value={option.value}
             disabled={option.value === ''}
           >
-            {option.label}
+            {option?.[obJectKeys || 'label']}
           </MenuItem>
         ))}
     </StyledTextField>
