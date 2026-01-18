@@ -11,6 +11,7 @@ const generateRequestKey = (method: string, url: string, data: any) => {
 
 export const useQueryHandler = () => {
   const { retryFailedRequest, getNewToken } = useAuthUtils();
+  console.log('useQueryHandler initialized', retryFailedRequest, getNewToken);
 
   const handleTokenExpiration = async (
     error: any,
@@ -18,6 +19,14 @@ export const useQueryHandler = () => {
     data: any,
     method: string = 'post'
   ) => {
+    console.log(
+      'Handling token expiration for error:',
+      error,
+      url,
+      data,
+      method
+    );
+
     const status = error?.response?.status || error?.status;
     if (status === 401) {
       if (!refreshingTokenPromise) {

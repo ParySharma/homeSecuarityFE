@@ -34,6 +34,9 @@ export const useApiQueries = () => {
 
     getDetails: (url: string) => handleQuery('get', url, setAssignOrgs()),
 
+    fetchQuery: (url: string, data?: any) =>
+      handleQuery('get', url, setAssignOrgs(data)),
+
     getListQuery: (url: string, data?: any) =>
       handleQuery('post', url, setAssignOrgs(data)),
 
@@ -41,7 +44,7 @@ export const useApiQueries = () => {
       handleQuery('post', url, setAssignOrgs(data)),
 
     addUpdateQuery: (url: string, data: any, method: string = 'post') =>
-      handleQuery(method, url, setAssignOrgs(data)),
+      handleQuery(method, url, data),
 
     deleteQuery: (url: string, data: any) =>
       handleQuery('post', url, setAssignOrgs(data)),

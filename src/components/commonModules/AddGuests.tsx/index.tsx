@@ -11,6 +11,7 @@ import BarTitle from '@/components/BarTitle';
 import AddFormSvg from '@/assets/forms/addForm';
 import CommonInputField from '@/components/inputs/CommonInputField';
 import CardComponent from '@/components/Card';
+import { useApiQueries } from '@/api';
 
 const vehicalTypeOptions = [
   { value: 'CAR', label: 'Car' },
@@ -19,6 +20,8 @@ const vehicalTypeOptions = [
 ];
 
 const AddGuestForm = () => {
+  const { addUpdateQuery, getListQuery } = useApiQueries();
+
   const formik = useFormik({
     initialValues: {
       visitor_name: '',
@@ -47,8 +50,31 @@ const AddGuestForm = () => {
     }),
     validateOnBlur: false,
     validateOnChange: false,
-    onSubmit: (values) => {
-      console.log(values);
+    onSubmit: async (values) => {
+      const params = {
+        visitor_name: values.visitor_name,
+        mobile: values.mobile,
+        number_of_visitors: values.number_of_visitors,
+        vehicle_type: values.vehicle_type,
+        vehicle_number: values.vehicle_number,
+        purpose: values.purpose,
+        house_id: '',
+        guard_id: '',
+        status: 'PENDING',
+      };
+      console.log(params, '==============');
+      return;
+      const addformsrep: any = await addUpdateQuery(
+        'activitytracker/submit-forms/create',
+        params
+      );
+      if (addformsrep?.data?.success === 1) {
+        console.log('Guest added successfully');
+
+        formik.resetForm();
+      } else {
+        console.log('Error adding guest');
+      }
     },
   });
 
