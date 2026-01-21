@@ -28,6 +28,10 @@ interface InitialState {
   getHouseListingLoading?: boolean;
   getHouseListingData?: any[];
   getHouseListingError?: any;
+
+  getSocietesListingLoading?: boolean;
+  getSocietesListingData?: any[];
+  getSocietesListingError?: any;
 }
 
 const initialState: InitialState = {
@@ -44,6 +48,10 @@ const initialState: InitialState = {
   getHouseListingLoading: false,
   getHouseListingData: EMPTY_ARRAY,
   getHouseListingError: NULL,
+
+  getSocietesListingLoading: false,
+  getSocietesListingData: EMPTY_ARRAY,
+  getSocietesListingError: NULL,
 };
 
 const slice = createSlice({
@@ -98,6 +106,19 @@ const slice = createSlice({
       state.getHouseListingLoading = false;
       state.getHouseListingError = action.payload;
     },
+
+    // Get Societes Listing
+    getSocietesListingLoading(state) {
+      state.getSocietesListingLoading = true;
+    },
+    getSocietesListingData(state, action: PayloadAction<any>) {
+      state.getSocietesListingLoading = false;
+      state.getSocietesListingData = action.payload;
+    },
+    getSocietesListingError(state, action: PayloadAction<any>) {
+      state.getSocietesListingLoading = false;
+      state.getSocietesListingError = action.payload;
+    },
   },
 });
 export const { setUserEventLoading, setUserEventData, hasUserEventError } =
@@ -146,13 +167,36 @@ export const getHouseListing = (getListQuery: QueryFnType, props?: any) => {
         ...props,
       });
       const { success, data } = response?.data;
-      if (success === 1) {
+      if (success === 1 || success === true) {
         dispatch(slice.actions.getHouseListingData(data || EMPTY_ARRAY));
       } else {
         dispatch(slice.actions.getHouseListingError(response?.data));
       }
     } catch (error) {
       dispatch(slice.actions.getHouseListingError(error));
+    }
+  };
+};
+
+export const getSocietesListingRequest = (
+  getListQuery: QueryFnType,
+  props?: any
+) => {
+  return async () => {
+    dispatch(slice.actions.getSocietesListingLoading());
+    try {
+      const response = await getListQuery('/society/list', {
+        ...props,
+      });
+
+      const { success, data } = response?.data;
+      if (success === true || success === 1) {
+        dispatch(slice.actions.getSocietesListingData(data || EMPTY_ARRAY));
+      } else {
+        dispatch(slice.actions.getSocietesListingError(response?.data));
+      }
+    } catch (error) {
+      dispatch(slice.actions.getSocietesListingError(error));
     }
   };
 };

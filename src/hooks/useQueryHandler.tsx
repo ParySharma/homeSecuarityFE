@@ -1,6 +1,5 @@
 // Libraries
 import { useAuthUtils } from '@/hooks/useAuthUtils';
-import { log } from 'console';
 
 const pendingRequests: Map<string, Promise<any>> = new Map();
 
@@ -43,7 +42,6 @@ export const useQueryHandler = () => {
   };
 
   const handleQuery = async (method: string, url: string, data?: any) => {
-    console.log('Handling query:', method, url, data);
     const key = generateRequestKey(method, url, data);
 
     // Return pending request if already in progress
@@ -59,7 +57,6 @@ export const useQueryHandler = () => {
         pendingRequests.delete(key); // Clean up after completion
       }
     })();
-    console.log(requestPromise, 'Storing pending request for key:', key);
     pendingRequests.set(key, requestPromise);
     return requestPromise;
   };

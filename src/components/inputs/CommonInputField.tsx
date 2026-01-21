@@ -31,6 +31,10 @@ type Props = {
   onDropdownOpen?: () => void;
   loading?: boolean;
   obJectKeys?: string | null;
+  onSelectChange?: (value: any) => void;
+  valueKey?: string | null;
+  loadingAsset?: React.ReactNode;
+  noOptionAsset?: React.ReactNode;
 };
 
 const CommonInputField = ({
@@ -53,6 +57,10 @@ const CommonInputField = ({
   onDropdownOpen,
   loading = false,
   obJectKeys,
+  onSelectChange,
+  valueKey,
+  loadingAsset,
+  noOptionAsset,
   ...props
 }: Props) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -132,16 +140,28 @@ const CommonInputField = ({
       }}
       {...props}
     >
-      {select &&
-        _map(options, (option: any) => (
-          <MenuItem
-            key={option.value}
-            value={option.value}
-            disabled={option.value === ''}
-          >
-            {option?.[obJectKeys || 'label']}
-          </MenuItem>
-        ))}
+      {select && loading ? (
+        <MenuItem disabled>{loadingAsset || 'Loading...'}</MenuItem>
+      ) : _isEmpty(options) ? (
+        <MenuItem disabled>{noOptionAsset || 'No options available'}</MenuItem>
+      ) : (
+        _map(options, (option: any) => {
+          return (
+            <MenuItem
+              key={option?.[valueKey || 'value'] || option?._id}
+              value={option?.[valueKey || 'value'] || option?._id}
+              disabled={
+                option?.[valueKey || 'value'] === '' || option?._id === ''
+              }
+              onClick={() => {
+                onSelectChange && onSelectChange(option);
+              }}
+            >
+              {option?.[obJectKeys || 'label']}
+            </MenuItem>
+          );
+        })
+      )}
     </StyledTextField>
   );
 };
