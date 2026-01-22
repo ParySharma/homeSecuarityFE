@@ -25,13 +25,17 @@ interface InitialState {
   visitorCreateData: any;
   visitorCreateError: any;
 
-  getHouseListingLoading?: boolean;
-  getHouseListingData?: any[];
-  getHouseListingError?: any;
+  houseListingLoading?: boolean;
+  houseListingData?: any[];
+  houseListingError?: any;
 
-  getSocietesListingLoading?: boolean;
-  getSocietesListingData?: any[];
-  getSocietesListingError?: any;
+  societesListingLoading?: boolean;
+  societesListingData?: any[];
+  societesListingError?: any;
+
+  visitorsListingLoading?: boolean;
+  visitorsListingData?: any[];
+  visitorsListingError?: any;
 }
 
 const initialState: InitialState = {
@@ -45,13 +49,17 @@ const initialState: InitialState = {
   visitorCreateData: EMPTY_OBJECT,
   visitorCreateError: NULL,
 
-  getHouseListingLoading: false,
-  getHouseListingData: EMPTY_ARRAY,
-  getHouseListingError: NULL,
+  houseListingLoading: false,
+  houseListingData: EMPTY_ARRAY,
+  houseListingError: NULL,
 
-  getSocietesListingLoading: false,
-  getSocietesListingData: EMPTY_ARRAY,
-  getSocietesListingError: NULL,
+  societesListingLoading: false,
+  societesListingData: EMPTY_ARRAY,
+  societesListingError: NULL,
+
+  visitorsListingLoading: false,
+  visitorsListingData: EMPTY_ARRAY,
+  visitorsListingError: NULL,
 };
 
 const slice = createSlice({
@@ -96,33 +104,50 @@ const slice = createSlice({
 
     // Get House Listing
     getHouseListingLoading(state) {
-      state.getHouseListingLoading = true;
+      state.houseListingLoading = true;
     },
     getHouseListingData(state, action: PayloadAction<any>) {
-      state.getHouseListingLoading = false;
-      state.getHouseListingData = action.payload;
+      state.houseListingLoading = false;
+      state.houseListingData = action.payload;
     },
     getHouseListingError(state, action: PayloadAction<any>) {
-      state.getHouseListingLoading = false;
-      state.getHouseListingError = action.payload;
+      state.houseListingLoading = false;
+      state.houseListingError = action.payload;
     },
 
     // Get Societes Listing
     getSocietesListingLoading(state) {
-      state.getSocietesListingLoading = true;
+      state.societesListingLoading = true;
     },
     getSocietesListingData(state, action: PayloadAction<any>) {
-      state.getSocietesListingLoading = false;
-      state.getSocietesListingData = action.payload;
+      state.societesListingLoading = false;
+      state.societesListingData = action.payload;
     },
     getSocietesListingError(state, action: PayloadAction<any>) {
-      state.getSocietesListingLoading = false;
-      state.getSocietesListingError = action.payload;
+      state.societesListingLoading = false;
+      state.societesListingError = action.payload;
+    },
+
+    // Get Visitors Listing
+    getVisitorsListingLoading(state) {
+      state.visitorsListingLoading = true;
+    },
+    getVisitorsListingData(state, action: PayloadAction<any>) {
+      state.visitorsListingLoading = false;
+      state.visitorsListingData = action.payload;
+    },
+    getVisitorsListingError(state, action: PayloadAction<any>) {
+      state.visitorsListingLoading = false;
+      state.visitorsListingError = action.payload;
     },
   },
 });
-export const { setUserEventLoading, setUserEventData, hasUserEventError } =
-  slice.actions;
+export const {
+  setUserEventLoading,
+  setUserEventData,
+  hasUserEventError,
+  getHouseListingData,
+} = slice.actions;
 
 export default slice.reducer;
 
@@ -148,7 +173,7 @@ export const visitorCreateRequest = (
         ...props,
       });
       const { success, data } = response?.data;
-      if (success === 1) {
+      if (success === 1 || success === true) {
         dispatch(slice.actions.visitorCreateData(data || EMPTY_ARRAY));
       } else {
         dispatch(slice.actions.visitorCreateError(response?.data));
@@ -197,6 +222,29 @@ export const getSocietesListingRequest = (
       }
     } catch (error) {
       dispatch(slice.actions.getSocietesListingError(error));
+    }
+  };
+};
+
+export const getVisitorsListingRequest = (
+  getListQuery: QueryFnType,
+  props?: any
+) => {
+  return async () => {
+    dispatch(slice.actions.getVisitorsListingLoading());
+    try {
+      const response = await getListQuery('/guard/visitors/list', {
+        ...props,
+      });
+
+      const { success, data } = response?.data;
+      if (success === true || success === 1) {
+        dispatch(slice.actions.getVisitorsListingData(data || EMPTY_ARRAY));
+      } else {
+        dispatch(slice.actions.getVisitorsListingError(response?.data));
+      }
+    } catch (error) {
+      dispatch(slice.actions.getVisitorsListingError(error));
     }
   };
 };

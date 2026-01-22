@@ -20,25 +20,29 @@ const DashStatusTableList = ({
 }: {
   data: any[];
   columns: any;
-  title: string;
+  title?: string;
   color: string;
 }) => {
   return (
     <div>
       <Stack direction={'row'} spacing={2} mb={1}>
-        <Divider
-          orientation='vertical'
-          variant='middle'
-          flexItem
-          sx={{
-            borderWidth: 3,
-            borderRadius: 8,
-            borderColor: color,
-          }}
-        />
-        <Typography variant='h6' sx={{ mb: 2, mt: 4, fontWeight: 600 }}>
-          {title} ({data?.length})
-        </Typography>
+        {title && (
+          <>
+            <Divider
+              orientation='vertical'
+              variant='middle'
+              flexItem
+              sx={{
+                borderWidth: 3,
+                borderRadius: 8,
+                borderColor: color,
+              }}
+            />
+            <Typography variant='h6' sx={{ mb: 2, mt: 4, fontWeight: 600 }}>
+              {title} ({data?.length})
+            </Typography>
+          </>
+        )}
       </Stack>
       <CommonTable columns={columns} loading={false} maxHeight={370}>
         {_map(data, (row, index) => (

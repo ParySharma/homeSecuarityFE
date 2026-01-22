@@ -7,15 +7,19 @@ import * as Yup from 'yup';
 
 import ButtonStyled from '@/components/Button';
 import { BUTTON_TYPE, BUTTON_VARIANT_TYPE } from '@/utils/constants';
-import BarTitle from '@/components/BarTitle';
 import AddFormSvg from '@/assets/forms/addForm';
 import CommonInputField from '@/components/inputs/CommonInputField';
 import CardComponent from '@/components/Card';
 import { useApiQueries } from '@/api';
 import { RootState, dispatch, useSelector } from '@/redux/store';
-import { getHouseListing } from '@/redux/slices/commonSlice';
+import {
+  getHouseListing,
+  getHouseListingData,
+  getVisitorsListingRequest,
+} from '@/redux/slices/commonSlice';
 import useAuth from '@/contexts/useAuth';
 import { useErrorToast } from '@/utils/serverError';
+import { useRouter } from 'next/navigation';
 
 const vehicalTypeOptions = [
   { value: 'CAR', label: 'Car' },
@@ -29,14 +33,15 @@ const AddGuestForm = ({
   handleGetSocietyList: () => void;
 }) => {
   const {
-    getHouseListingLoading,
-    getHouseListingData,
-    getHouseListingError,
-    getSocietesListingLoading,
-    getSocietesListingData,
-    getSocietesListingError,
+    houseListingLoading,
+    houseListingData,
+    houseListingError,
+    societesListingLoading,
+    societesListingData,
+    societesListingError,
   } = useSelector((state: RootState) => state.commonSlice);
   const { user } = useAuth();
+  const router = useRouter();
   const { addUpdateQuery, getListQuery } = useApiQueries();
   const successToast = useErrorToast('success');
   const errorToast = useErrorToast('error');
@@ -76,13 +81,13 @@ const AddGuestForm = ({
     validateOnChange: false,
     onSubmit: async (values) => {
       const params = {
-        visitor_name: values.visitor_name,
-        mobile: values.mobile,
-        number_of_visitors: values.number_of_visitors,
-        vehicle_type: values.vehicle_type,
-        vehicle_number: values.vehicle_number,
-        purpose: values.purpose,
-        house_id: values.house_id,
+        visitor_name: values?.visitor_name,
+        mobile: values?.mobile,
+        number_of_visitors: values?.number_of_visitors,
+        vehicle_type: values?.vehicle_type,
+        vehicle_number: values?.vehicle_number,
+        purpose: values?.purpose,
+        house_id: values?.house_id,
         guard_id: user?.guard_id,
         status: 'PENDING',
       };
@@ -92,6 +97,8 @@ const AddGuestForm = ({
         if (res?.data?.success) {
           formik.resetForm();
           successToast(res?.data?.message || 'Guest added successfully');
+          dispatch(getVisitorsListingRequest(addUpdateQuery, {}));
+          router.push('/guests-list');
           setFormLoading(false);
         } else {
           errorToast(res?.data?.message || 'Something went wrong');
@@ -133,7 +140,7 @@ const AddGuestForm = ({
                   label='Vehicle Type'
                   select
                   options={vehicalTypeOptions}
-                  endIcon={formik?.values.vehicle_type ? '✖' : undefined}
+                  endIcon={formik?.values?.vehicle_type ? '✖' : undefined}
                   endIconClick={() => formik.setFieldValue('vehicle_type', '')}
                   endIconStyle={{ cursor: 'pointer' }}
                 />
@@ -145,7 +152,7 @@ const AddGuestForm = ({
                   maxDigits={4}
                 />
               </Stack>
-              {formik?.values.vehicle_type && (
+              {formik?.values?.vehicle_type && (
                 <CommonInputField
                   formik={formik}
                   name='vehicle_number'
@@ -159,9 +166,9 @@ const AddGuestForm = ({
                   placeholder='Select Society'
                   label='Society'
                   select
-                  options={getSocietesListingData}
+                  options={societesListingData}
                   obJectKeys={'name'}
-                  endIcon={formik?.values.society_id ? '✖' : undefined}
+                  endIcon={formik?.values?.society_id ? '✖' : undefined}
                   endIconClick={() => {
                     formik.setFieldValue('society_id', '');
                     formik.setFieldValue('house_id', '');
@@ -172,30 +179,34 @@ const AddGuestForm = ({
                   }}
                   onSelectChange={(value) => {
                     formik.setFieldValue('society_id', value?._id || '');
+                    dispatch(getHouseListingData([]));
                     dispatch(
                       getHouseListing(addUpdateQuery, {
                         societyId: value?._id.toString(),
                       })
                     );
                   }}
-                  loading={getSocietesListingLoading}
+                  loading={societesListingLoading}
                 />
-                <CommonInputField
-                  formik={formik}
-                  name='house_id'
-                  placeholder='Select House'
-                  label='House'
-                  select
-                  options={getHouseListingData}
-                  obJectKeys={'house_number'}
-                  endIcon={formik?.values.house_id ? '✖' : undefined}
-                  endIconClick={() => formik.setFieldValue('house_id', '')}
-                  endIconStyle={{ cursor: 'pointer' }}
-                  loading={getHouseListingLoading}
-                  onSelectChange={(value) => {
-                    formik.setFieldValue('house_id', value?._id || '');
-                  }}
-                />
+                {formik?.values?.society_id && (
+                  <CommonInputField
+                    formik={formik}
+                    name='house_id'
+                    placeholder='Select House'
+                    label='House'
+                    select
+                    options={houseListingData}
+                    obJectKeys={'house_number'}
+                    endIcon={formik?.values?.house_id ? '✖' : undefined}
+                    endIconClick={() => formik.setFieldValue('house_id', '')}
+                    endIconStyle={{ cursor: 'pointer' }}
+                    loading={houseListingLoading}
+                    onSelectChange={(value) => {
+                      formik.setFieldValue('house_id', value?._id || '');
+                    }}
+                    noOptionAsset={'Please select an society first'}
+                  />
+                )}
               </Stack>
 
               <CommonInputField

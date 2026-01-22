@@ -45,7 +45,6 @@ const CommonDashboard = ({ data }: { data: any[] }) => {
     { label: 'Date', align: 'center' },
     { label: 'Time' },
   ];
-  console.log(data, 'datadata');
 
   const approvedList = data?.filter((item) => item?.status === 1);
   const pendingList = data?.filter((item) => item?.status === 3);
