@@ -36,6 +36,10 @@ interface InitialState {
   visitorsListingLoading?: boolean;
   visitorsListingData?: any[];
   visitorsListingError?: any;
+
+  visitorExitLoading?: boolean;
+  visitorExitData?: any;
+  visitorExitError?: any;
 }
 
 const initialState: InitialState = {
@@ -60,6 +64,10 @@ const initialState: InitialState = {
   visitorsListingLoading: false,
   visitorsListingData: EMPTY_ARRAY,
   visitorsListingError: NULL,
+
+  visitorExitLoading: false,
+  visitorExitData: EMPTY_OBJECT,
+  visitorExitError: NULL,
 };
 
 const slice = createSlice({
@@ -140,6 +148,19 @@ const slice = createSlice({
       state.visitorsListingLoading = false;
       state.visitorsListingError = action.payload;
     },
+
+    // Mark Visitor Exit
+    markVisitorExitLoading(state) {
+      state.visitorExitLoading = true;
+    },
+    markVisitorExitData(state, action: PayloadAction<any>) {
+      state.visitorExitLoading = false;
+      state.visitorExitData = action.payload;
+    },
+    markVisitorExitError(state, action: PayloadAction<any>) {
+      state.visitorExitLoading = false;
+      state.visitorExitError = action.payload;
+    },
   },
 });
 export const {
@@ -147,6 +168,7 @@ export const {
   setUserEventData,
   hasUserEventError,
   getHouseListingData,
+  markVisitorExitData,
 } = slice.actions;
 
 export default slice.reducer;
@@ -245,6 +267,29 @@ export const getVisitorsListingRequest = (
       }
     } catch (error) {
       dispatch(slice.actions.getVisitorsListingError(error));
+    }
+  };
+};
+
+export const markVisitorExitRequest = (
+  getListQuery: QueryFnType,
+  props?: any
+) => {
+  return async () => {
+    dispatch(slice.actions.markVisitorExitLoading());
+    try {
+      const response = await getListQuery('/guard/visitor/exit', {
+        ...props,
+      });
+
+      const { success, data } = response?.data;
+      if (success === true || success === 1) {
+        dispatch(slice.actions.markVisitorExitData(data || EMPTY_ARRAY));
+      } else {
+        dispatch(slice.actions.markVisitorExitError(response?.data));
+      }
+    } catch (error) {
+      dispatch(slice.actions.markVisitorExitError(error));
     }
   };
 };

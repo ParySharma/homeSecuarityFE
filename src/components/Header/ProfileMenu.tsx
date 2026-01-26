@@ -39,7 +39,7 @@ export default function ProfileMenu() {
                 fontWeight: 600,
               }}
             >
-              M
+              {user?.user_meta?.name?.charAt(0)?.toUpperCase() || 'U'}
             </Avatar>
           </IconButton>
         </Tooltip>
@@ -78,17 +78,17 @@ export default function ProfileMenu() {
           },
         }}
       >
-        <MenuItem sx={menuItemSX} onClick={handleClose}>
+        {/* <MenuItem sx={menuItemSX} onClick={handleClose}>
           <Avatar sx={avatarSX} />
           <Typography>Profile</Typography>
-        </MenuItem>
+        </MenuItem> */}
 
         {/* <MenuItem sx={menuItemSX} onClick={handleClose}>
           <Avatar sx={avatarSX} />
           <Typography>My account</Typography>
         </MenuItem> */}
 
-        <Divider sx={{ borderColor: 'var(--divider-color)' }} />
+        {/* <Divider sx={{ borderColor: 'var(--divider-color)' }} /> */}
 
         {/* <MenuItem sx={menuItemSX} onClick={handleClose}>
           <ListItemIcon sx={iconSX}>
