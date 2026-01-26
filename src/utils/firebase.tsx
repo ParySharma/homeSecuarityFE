@@ -4,7 +4,7 @@ import { getMessaging, getToken } from 'firebase/messaging';
 // Utils
 import { NULL } from '@/utils/constants';
 import { initializeApp } from 'firebase/app';
-import { addUpdateQuery } from '@/api';
+// import { addUpdateQuery } from '@/api';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_PUBLIC_API_KEY,
@@ -48,29 +48,29 @@ export const requestForToken = async () => {
 };
 
 export const initializeNotifications = async (userId: any) => {
-  try {
-    const permission = Notification.permission;
-    if (permission === 'default') {
-      const result = await Notification.requestPermission();
-      if (result === 'granted') {
-        const token = await requestForToken();
-        if (token) {
-          const res = await addUpdateQuery('auth/add-device-token', {
-            user_id: userId,
-            token: token,
-          });
-          if (res.data?.success === 1) {
-            console.log('Device token added successfully');
-          } else {
-            console.error(
-              'Error adding device token:',
-              res.data?.message || res.data?.error_code
-            );
-          }
-        }
-      }
-    }
-  } catch (error) {
-    console.error('Error initializing notifications:', error);
-  }
+  // try {
+  //   const permission = Notification.permission;
+  //   if (permission === 'default') {
+  //     const result = await Notification.requestPermission();
+  //     if (result === 'granted') {
+  //       const token = await requestForToken();
+  //       if (token) {
+  //         const res = await addUpdateQuery('auth/add-device-token', {
+  //           user_id: userId,
+  //           token: token,
+  //         });
+  //         if (res.data?.success === 1) {
+  //           console.log('Device token added successfully');
+  //         } else {
+  //           console.error(
+  //             'Error adding device token:',
+  //             res.data?.message || res.data?.error_code
+  //           );
+  //         }
+  //       }
+  //     }
+  //   }
+  // } catch (error) {
+  //   console.error('Error initializing notifications:', error);
+  // }
 };
