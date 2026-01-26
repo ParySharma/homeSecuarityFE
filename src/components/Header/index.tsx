@@ -1,7 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Box, IconButton, Drawer, Typography } from '@mui/material';
+import {
+  Box,
+  IconButton,
+  Drawer,
+  Typography,
+  Chip,
+  Tooltip,
+} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import Image from 'next/image';
@@ -12,8 +19,11 @@ import HeaderMenu from './HeaderMenu';
 import { headerStyle } from './headerStyle';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import QuickAddButton from './QuickAddButton';
+import useAuth from '@/contexts/useAuth';
+import { InfoOutline } from '@mui/icons-material';
 const Header = () => {
   const [open, setOpen] = useState(false);
+  const { user } = useAuth();
 
   return (
     <>
@@ -50,6 +60,36 @@ const Header = () => {
 
         {/* RIGHT: Notifications + Profile */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Chip
+            label={user?.assigned_SocietieName}
+            variant='outlined'
+            sx={{
+              span: {
+                lineHeight: 1.2,
+                fontSize: '0.875rem',
+                color: 'var(--primary-button-background-color)',
+              },
+              display: { xs: 'none', md: 'flex' },
+            }}
+          />
+          <Tooltip title='Quick add guest'>
+            <IconButton
+              onClick={() => {}}
+              size='small'
+              sx={{
+                color: 'var(--header-text-color)',
+                backgroundColor: 'var(--primary-button-back-opacity)',
+                '&:hover': {
+                  backgroundColor: 'var(--primary-button-back-opacity)',
+                },
+                width: 35,
+                height: 35,
+              }}
+            >
+              <InfoOutline />
+            </IconButton>
+          </Tooltip>
+
           <QuickAddButton />
           <Notification />
           <ProfileMenu />

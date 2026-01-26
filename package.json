@@ -6,9 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "build:production": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "start-frontend": "npm install && npm run build --prefix admin &&  npm run build --prefix user && concurrently \"npm run start --prefix admin\" \"npm run start --prefix user\""
+    "start": "sh server.production.sh",
+    "lint": "next lint"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

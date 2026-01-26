@@ -1,6 +1,7 @@
 'use client';
 import { useApiQueries } from '@/api';
 import AddGurstForm from '@/components/commonModules/AddGuests.tsx';
+import useAuth from '@/contexts/useAuth';
 import {
   getHouseListing,
   getSocietesListingRequest,
@@ -10,10 +11,11 @@ import _isEmpty from 'lodash/isEmpty';
 
 const AddGurstPage = () => {
   const { getListQuery, addUpdateQuery, fetchQuery } = useApiQueries();
+  const { user } = useAuth();
 
-  const getSocietyList = async () => {
+  const getSocietyList = async (assigned_SocietyId?: string) => {
     const param = {
-      // guard_id: user?.guard_id,
+      guard_id: assigned_SocietyId,
     };
     await dispatch(getSocietesListingRequest(addUpdateQuery, param));
   };

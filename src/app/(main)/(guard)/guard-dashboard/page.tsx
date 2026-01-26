@@ -1,18 +1,34 @@
 'use client';
+import { useApiQueries } from '@/api';
 import CommonDashboard from '@/components/commonDashboard/CommonDashboard';
-import useAuth from '@/contexts/useAuth';
-import { visitorsMockData } from '@/utils/mockData';
-import { Box, Button, Typography } from '@mui/material';
-import React from 'react';
+import { getVisitorsListingRequest } from '@/redux/slices/commonSlice';
+import { RootState, dispatch, useSelector } from '@/redux/store';
+import { Box } from '@mui/material';
+import React, { useEffect } from 'react';
+import _isEmpty from 'lodash/isEmpty';
 
 const Dashbaord = () => {
-  const { logout } = useAuth();
+  const { addUpdateQuery, getListQuery } = useApiQueries();
+  const { visitorsListingLoading, visitorsListingData, visitorsListingError } =
+    useSelector((state: RootState) => state.commonSlice);
 
-  const data = visitorsMockData;
+  const fetchVisitorsListing = async () => {
+    dispatch(getVisitorsListingRequest(addUpdateQuery, {}));
+  };
+
+  useEffect(() => {
+    if (
+      _isEmpty(visitorsListingData) &&
+      !visitorsListingLoading &&
+      !visitorsListingError
+    ) {
+      fetchVisitorsListing();
+    }
+  }, [visitorsListingData, visitorsListingLoading]);
 
   return (
     <Box>
-      <CommonDashboard data={data} />
+      <CommonDashboard />
     </Box>
   );
 };

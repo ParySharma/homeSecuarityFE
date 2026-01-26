@@ -67,3 +67,30 @@ export const getMenuItems = (role: string) => {
       return [];
   }
 };
+
+export const getwingslist = (wings: string) => {
+  if (wings) {
+    return wings.split(',').map((wing, index) => {
+      return { id: index + 1, label: wing.trim(), value: wing.trim() };
+    });
+  }
+  return [];
+};
+
+export const getFloorListing = (
+  totalFloors: number,
+  unitsPerFloor: number,
+  seriesStyle: string
+) => {
+  const floorList = [];
+  for (let floor = 1; floor <= totalFloors; floor++) {
+    for (let unit = 1; unit <= unitsPerFloor; unit++) {
+      floorList.push({
+        id: (floor - 1) * unitsPerFloor + unit,
+        label: `${floor}0${unit}`,
+        value: `${floor}0${unit}`,
+      });
+    }
+  }
+  return floorList;
+};

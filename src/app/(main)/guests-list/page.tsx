@@ -69,8 +69,8 @@ const GuestList = () => {
             <TableCell>{moment(row?.visitTime).format('h:mm A')}</TableCell>
             <TableCell>
               <Stack direction='row' spacing={1}>
-                <IconButton icon='edit' />
-                <IconButton icon='delete' />
+                <IconButton icon='check' />
+                <IconButton icon='cancel' />
               </Stack>
             </TableCell>
           </TableRow>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, TextField, MenuItem, Stack } from '@mui/material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -20,6 +20,7 @@ import {
 import useAuth from '@/contexts/useAuth';
 import { useErrorToast } from '@/utils/serverError';
 import { useRouter } from 'next/navigation';
+import { getFloorListing, getwingslist } from '@/utils/commonFunction';
 
 const vehicalTypeOptions = [
   { value: 'CAR', label: 'Car' },
@@ -46,6 +47,7 @@ const AddGuestForm = ({
   const successToast = useErrorToast('success');
   const errorToast = useErrorToast('error');
   const [formLoading, setFormLoading] = useState(false);
+  const assigned_SocietyId = user?.assigned_SocietyId || '';
 
   const formik = useFormik({
     initialValues: {
@@ -57,6 +59,7 @@ const AddGuestForm = ({
       purpose: '',
       society_id: '',
       house_id: '',
+      wing_id: '',
     },
     validationSchema: Yup.object({
       visitor_name: Yup.string().required('Visitor name is required'),
@@ -74,8 +77,11 @@ const AddGuestForm = ({
             : schema.notRequired();
         }
       ),
-      society_id: Yup.string().required('Society is required'),
+      society_id: !assigned_SocietyId
+        ? Yup.string().required('Society is required')
+        : Yup.string(),
       house_id: Yup.string().required('House is required'),
+      wing_id: Yup.string().required('Wing is required'),
     }),
     validateOnBlur: false,
     validateOnChange: false,
@@ -110,6 +116,27 @@ const AddGuestForm = ({
       }
     },
   });
+
+  useEffect(() => {
+    if (assigned_SocietyId) {
+      formik.setFieldValue('society_id', assigned_SocietyId);
+      dispatch(getHouseListingData([]));
+      dispatch(
+        getHouseListing(addUpdateQuery, {
+          societyId: assigned_SocietyId.toString(),
+        })
+      );
+    }
+  }, [assigned_SocietyId]);
+
+  const wingsListng = getwingslist(user?.assigned_Societie?.wings_set || '');
+  const floorsListng = getFloorListing(
+    user?.assigned_Societie?.numbers_of_floor,
+    user?.assigned_Societie?.rooms_per_floor,
+    'Floor {floor}0{unit}'
+  );
+
+  console.log(floorsListng, 'floorsListng====');
 
   return (
     <CardComponent title='Add Guest'>
@@ -159,54 +186,85 @@ const AddGuestForm = ({
                   placeholder='Vehicle Number'
                 />
               )}
+
+              {assigned_SocietyId ? null : (
+                <Stack direction='row' spacing={2}>
+                  <CommonInputField
+                    formik={formik}
+                    name='society_id'
+                    placeholder='Select Society'
+                    label='Society'
+                    select
+                    options={societesListingData}
+                    obJectKeys={'name'}
+                    endIcon={formik?.values?.society_id ? '✖' : undefined}
+                    endIconClick={() => {
+                      formik.setFieldValue('society_id', '');
+                      formik.setFieldValue('house_id', '');
+                      dispatch(getHouseListingData([]));
+                      formik.setFieldValue('wing_id', '');
+                    }}
+                    endIconStyle={{ cursor: 'pointer' }}
+                    onDropdownOpen={() => {
+                      handleGetSocietyList();
+                    }}
+                    onSelectChange={(value) => {
+                      formik.setFieldValue('society_id', value?._id || '');
+                      formik.setFieldValue('house_id', '');
+                      formik.setFieldValue('wing_id', '');
+                      dispatch(
+                        getHouseListing(addUpdateQuery, {
+                          societyId: value?._id.toString(),
+                        })
+                      );
+                    }}
+                    loading={societesListingLoading}
+                  />
+                </Stack>
+              )}
+
               <Stack direction='row' spacing={2}>
                 <CommonInputField
                   formik={formik}
-                  name='society_id'
-                  placeholder='Select Society'
-                  label='Society'
+                  name='wing_id'
+                  placeholder='Select Wing'
+                  label='Select Wing'
                   select
-                  options={societesListingData}
-                  obJectKeys={'name'}
-                  endIcon={formik?.values?.society_id ? '✖' : undefined}
+                  options={wingsListng}
+                  obJectKeys={'label'}
+                  endIcon={formik?.values?.wing_id ? '✖' : undefined}
                   endIconClick={() => {
-                    formik.setFieldValue('society_id', '');
+                    formik.setFieldValue('wing_id', '');
                     formik.setFieldValue('house_id', '');
                   }}
                   endIconStyle={{ cursor: 'pointer' }}
                   onDropdownOpen={() => {
-                    handleGetSocietyList();
+                    formik.setFieldValue('house_id', '');
                   }}
                   onSelectChange={(value) => {
-                    formik.setFieldValue('society_id', value?._id || '');
-                    dispatch(getHouseListingData([]));
-                    dispatch(
-                      getHouseListing(addUpdateQuery, {
-                        societyId: value?._id.toString(),
-                      })
-                    );
+                    formik.setFieldValue('wing_id', value?.value || '');
+                    // formik.setFieldValue('house_id', '');
                   }}
                   loading={societesListingLoading}
                 />
-                {formik?.values?.society_id && (
-                  <CommonInputField
-                    formik={formik}
-                    name='house_id'
-                    placeholder='Select House'
-                    label='House'
-                    select
-                    options={houseListingData}
-                    obJectKeys={'house_number'}
-                    endIcon={formik?.values?.house_id ? '✖' : undefined}
-                    endIconClick={() => formik.setFieldValue('house_id', '')}
-                    endIconStyle={{ cursor: 'pointer' }}
-                    loading={houseListingLoading}
-                    onSelectChange={(value) => {
-                      formik.setFieldValue('house_id', value?._id || '');
-                    }}
-                    noOptionAsset={'Please select an society first'}
-                  />
-                )}
+
+                <CommonInputField
+                  formik={formik}
+                  name='house_id'
+                  placeholder='Select House'
+                  label='Select House'
+                  select
+                  options={floorsListng}
+                  obJectKeys={'label'}
+                  endIcon={formik?.values?.house_id ? '✖' : undefined}
+                  endIconClick={() => formik.setFieldValue('house_id', '')}
+                  endIconStyle={{ cursor: 'pointer' }}
+                  loading={houseListingLoading}
+                  onSelectChange={(value) => {
+                    formik.setFieldValue('house_id', value?._id || '');
+                  }}
+                  noOptionAsset={'Please select an society first'}
+                />
               </Stack>
 
               <CommonInputField
