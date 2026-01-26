@@ -13,6 +13,8 @@ import React from 'react';
 import _map from 'lodash/map';
 import moment from 'moment';
 import _isEmpty from 'lodash/isEmpty';
+import StatusChip from '@/components/StatusChip';
+import IconButton from '@/components/IconButton';
 
 const DashStatusTableList = ({
   data,
@@ -58,6 +60,7 @@ const DashStatusTableList = ({
         ) : (
           _map(data, (row, index) => (
             <TableRow key={index} hover>
+              <TableCell>{index + 1}</TableCell>
               <TableCell>{row?.visitor_name}</TableCell>
               <TableCell>{row?.mobile}</TableCell>
               {/* <TableCell>{row?.appartment}</TableCell> */}
@@ -67,10 +70,25 @@ const DashStatusTableList = ({
                 {row?.vehicle_type} ({row?.vehicle_number})
               </TableCell>
               {/* <TableCell>{row?.gate}</TableCell> */}
-              <TableCell align='center'>
-                {moment(row?.entry_time).format('Do, MMM YYYY')}
+              <TableCell align='center' width={220}>
+                {moment(row?.entry_time).format('Do, MMM YYYY, h:mm A')} <br />
+                To <br />
+                {row?.exit_time
+                  ? moment(row?.exit_time).format('Do, MMM YYYY, h:mm A')
+                  : 'Not exited yet'}
               </TableCell>
-              <TableCell>{moment(row?.visitTime).format('h:mm A')}</TableCell>
+              {/* <TableCell>{moment(row?.visitTime).format('h:mm A')}</TableCell> */}
+              <TableCell>
+                <Stack direction='row' spacing={1} alignItems='center'>
+                  <StatusChip status={row?.status} />
+
+                  {!row?.exit_time ? (
+                    <IconButton icon='exit' />
+                  ) : (
+                    <StatusChip status={'exited'} />
+                  )}
+                </Stack>
+              </TableCell>
             </TableRow>
           ))
         )}

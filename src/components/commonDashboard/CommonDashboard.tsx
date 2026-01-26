@@ -32,7 +32,7 @@ const CommonDashboard = () => {
     },
     totalRejected: {
       value:
-        visitorsListingData?.filter((item: any) => item?.status === 'REJECT')
+        visitorsListingData?.filter((item: any) => item?.status === 'REJECTED')
           ?.length || 0,
       icon: <CancelIcon />,
       gradient: 'linear-gradient(135deg, #ff416c, #ff4b2b)',
@@ -63,6 +63,7 @@ const CommonDashboard = () => {
   ];
 
   const columns = [
+    { label: 'Sr. No.' },
     { label: 'Name' },
     { label: 'Mobile' },
     // { label: 'Appartmen' },
@@ -70,8 +71,9 @@ const CommonDashboard = () => {
     { label: 'Purpose' },
     { label: 'Vehical' },
     // { label: 'Gate' },
-    { label: 'Date', align: 'center' },
-    { label: 'Time' },
+    { label: 'Date time Enter/Exit', align: 'center' },
+    // { label: 'Time' },
+    { label: 'Status' },
     // { label: 'Actions' },
   ];
 

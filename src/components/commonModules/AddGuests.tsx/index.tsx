@@ -58,7 +58,7 @@ const AddGuestForm = ({
       vehicle_number: '',
       purpose: '',
       society_id: '',
-      house_id: '',
+      house_number: '',
       wing_id: '',
     },
     validationSchema: Yup.object({
@@ -80,7 +80,7 @@ const AddGuestForm = ({
       society_id: !assigned_SocietyId
         ? Yup.string().required('Society is required')
         : Yup.string(),
-      house_id: Yup.string().required('House is required'),
+      house_number: Yup.string().required('House is required'),
       wing_id: Yup.string().required('Wing is required'),
     }),
     validateOnBlur: false,
@@ -93,10 +93,13 @@ const AddGuestForm = ({
         vehicle_type: values?.vehicle_type,
         vehicle_number: values?.vehicle_number,
         purpose: values?.purpose,
-        house_id: values?.house_id,
         guard_id: user?.guard_id,
         status: 'PENDING',
+        wing_id: values?.wing_id,
+        house_number: values?.house_number,
       };
+      console.log(params, 'params====');
+      // return;
       setFormLoading(true);
       try {
         const res: any = await addUpdateQuery('/guard/visitor/create', params);
@@ -200,7 +203,7 @@ const AddGuestForm = ({
                     endIcon={formik?.values?.society_id ? '✖' : undefined}
                     endIconClick={() => {
                       formik.setFieldValue('society_id', '');
-                      formik.setFieldValue('house_id', '');
+                      formik.setFieldValue('house_number', '');
                       dispatch(getHouseListingData([]));
                       formik.setFieldValue('wing_id', '');
                     }}
@@ -210,7 +213,7 @@ const AddGuestForm = ({
                     }}
                     onSelectChange={(value) => {
                       formik.setFieldValue('society_id', value?._id || '');
-                      formik.setFieldValue('house_id', '');
+                      formik.setFieldValue('house_number', '');
                       formik.setFieldValue('wing_id', '');
                       dispatch(
                         getHouseListing(addUpdateQuery, {
@@ -235,33 +238,33 @@ const AddGuestForm = ({
                   endIcon={formik?.values?.wing_id ? '✖' : undefined}
                   endIconClick={() => {
                     formik.setFieldValue('wing_id', '');
-                    formik.setFieldValue('house_id', '');
+                    formik.setFieldValue('house_number', '');
                   }}
                   endIconStyle={{ cursor: 'pointer' }}
                   onDropdownOpen={() => {
-                    formik.setFieldValue('house_id', '');
+                    formik.setFieldValue('house_number', '');
                   }}
                   onSelectChange={(value) => {
                     formik.setFieldValue('wing_id', value?.value || '');
-                    // formik.setFieldValue('house_id', '');
+                    // formik.setFieldValue('house_number', '');
                   }}
                   loading={societesListingLoading}
                 />
 
                 <CommonInputField
                   formik={formik}
-                  name='house_id'
+                  name='house_number'
                   placeholder='Select House'
                   label='Select House'
                   select
                   options={floorsListng}
                   obJectKeys={'label'}
-                  endIcon={formik?.values?.house_id ? '✖' : undefined}
-                  endIconClick={() => formik.setFieldValue('house_id', '')}
+                  endIcon={formik?.values?.house_number ? '✖' : undefined}
+                  endIconClick={() => formik.setFieldValue('house_number', '')}
                   endIconStyle={{ cursor: 'pointer' }}
                   loading={houseListingLoading}
                   onSelectChange={(value) => {
-                    formik.setFieldValue('house_id', value?._id || '');
+                    formik.setFieldValue('house_number', value?._id || '');
                   }}
                   noOptionAsset={'Please select an society first'}
                 />

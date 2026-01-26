@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 import React from 'react';
 import styled from '@emotion/styled';
 
@@ -8,6 +8,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CancelIcon from '@mui/icons-material/Cancel';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
 // Lodash
 import _includes from 'lodash/includes';
@@ -42,18 +43,22 @@ const iconMap: Record<string, React.ReactNode> = {
   visibility: <VisibilityIcon className='visibility' fontSize='small' />,
   cancel: <CancelIcon className='cancel' fontSize='small' />,
   check: <CheckCircleIcon className='checkCircle' fontSize='small' />,
+  exit: <ExitToAppIcon className='exit' fontSize='small' />,
 };
 
 type Props = {
   style?: React.CSSProperties;
   icon: string;
+  onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  loading?: boolean;
 };
 
-const IconButton = ({ style, icon }: Props) => {
-  const errorIcons = _includes(['delete', 'cancel'], icon);
+const IconButton = ({ style, icon, onClick, loading }: Props) => {
+  const errorIcons = _includes(['delete', 'cancel', 'ExitToAppIcon'], icon);
 
   return (
     <MainContainer
+      onClick={(e) => onClick && onClick(e)}
       style={{
         ...style,
         backgroundColor: errorIcons ? '#d32f2f' : undefined,
@@ -72,7 +77,11 @@ const IconButton = ({ style, icon }: Props) => {
         },
       }}
     >
-      {iconMap[icon] || null}
+      {loading ? (
+        <CircularProgress size={16} color='inherit' />
+      ) : (
+        iconMap[icon] || null
+      )}
     </MainContainer>
   );
 };
