@@ -60,38 +60,43 @@ const Header = () => {
 
         {/* RIGHT: Notifications + Profile */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Chip
-            label={user?.assigned_SocietieName}
-            variant='outlined'
-            sx={{
-              span: {
-                lineHeight: 1.2,
-                fontSize: '0.875rem',
-                color: 'var(--primary-button-background-color)',
-              },
-              display: { xs: 'none', md: 'flex' },
-            }}
-          />
-          <Tooltip title='Quick add guest'>
-            <IconButton
-              onClick={() => {}}
-              size='small'
+          {user?.assigned_SocietieName && (
+            <Chip
+              label={user?.assigned_SocietieName}
+              variant='outlined'
               sx={{
-                color: 'var(--header-text-color)',
-                backgroundColor: 'var(--primary-button-back-opacity)',
-                '&:hover': {
-                  backgroundColor: 'var(--primary-button-back-opacity)',
+                span: {
+                  lineHeight: 1.2,
+                  fontSize: '0.875rem',
+                  color: 'var(--primary-button-background-color)',
                 },
-                width: 35,
-                height: 35,
+                display: { xs: 'none', md: 'flex' },
               }}
-            >
-              <InfoOutline />
-            </IconButton>
-          </Tooltip>
+            />
+          )}
+          {user?.assigned_SocietieName && (
+            <Tooltip title={user?.assigned_SocietieName}>
+              <IconButton
+                onClick={() => {}}
+                size='small'
+                sx={{
+                  color: 'var(--header-text-color)',
+                  backgroundColor: 'var(--primary-button-back-opacity)',
+                  '&:hover': {
+                    backgroundColor: 'var(--primary-button-back-opacity)',
+                  },
+                  width: 35,
+                  height: 35,
+                  display: { xs: 'block', md: 'none', lg: 'none' },
+                }}
+              >
+                <InfoOutline />
+              </IconButton>
+            </Tooltip>
+          )}
 
           <QuickAddButton />
-          <Notification />
+          {/* <Notification /> */}
           <ProfileMenu />
         </Box>
       </Box>

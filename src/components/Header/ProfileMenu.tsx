@@ -14,16 +14,23 @@ import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import useAuth from '@/contexts/useAuth';
+import { useRouter } from 'next/navigation';
 
 export default function ProfileMenu() {
   const { logout, user } = useAuth();
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
+  const router = useRouter();
 
   const handleOpen = (event: React.MouseEvent<HTMLElement>) =>
     setAnchorEl(event.currentTarget);
 
   const handleClose = () => setAnchorEl(null);
+
+  const handleProfileClick = () => {
+    handleClose();
+    router.push('/profile');
+  };
 
   return (
     <>
@@ -78,10 +85,15 @@ export default function ProfileMenu() {
           },
         }}
       >
-        {/* <MenuItem sx={menuItemSX} onClick={handleClose}>
+        <MenuItem
+          sx={menuItemSX}
+          onClick={() => {
+            handleProfileClick();
+          }}
+        >
           <Avatar sx={avatarSX} />
           <Typography>Profile</Typography>
-        </MenuItem> */}
+        </MenuItem>
 
         {/* <MenuItem sx={menuItemSX} onClick={handleClose}>
           <Avatar sx={avatarSX} />
