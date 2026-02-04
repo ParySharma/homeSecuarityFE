@@ -1,4 +1,5 @@
 // Libraries
+import useAuth from '@/contexts/useAuth';
 import { useAuthUtils } from '@/hooks/useAuthUtils';
 
 const pendingRequests: Map<string, Promise<any>> = new Map();
@@ -11,6 +12,7 @@ const generateRequestKey = (method: string, url: string, data: any) => {
 
 export const useQueryHandler = () => {
   const { retryFailedRequest, getNewToken } = useAuthUtils();
+  const { logout } = useAuth();
 
   const handleTokenExpiration = async (
     error: any,
@@ -20,23 +22,24 @@ export const useQueryHandler = () => {
   ) => {
     const status = error?.response?.status || error?.status;
     if (status === 401) {
-      if (!refreshingTokenPromise) {
-        // Only the first 401 will trigger this
-        refreshingTokenPromise = getNewToken()
-          .then((success) => success)
-          .catch(() => false)
-          .finally(() => {
-            refreshingTokenPromise = null;
-          });
-      }
-      const tokenRefreshed = await refreshingTokenPromise;
-      if (tokenRefreshed) {
-        // Retry only if token was refreshed
-        return retryFailedRequest(url, data, method);
-      } else {
-        // Don't retry if refresh failed
-        throw error;
-      }
+      logout();
+      // if (!refreshingTokenPromise) {
+      //   // Only the first 401 will trigger this
+      //   refreshingTokenPromise = getNewToken()
+      //     .then((success) => success)
+      //     .catch(() => false)
+      //     .finally(() => {
+      //       refreshingTokenPromise = null;
+      //     });
+      // }
+      // const tokenRefreshed = await refreshingTokenPromise;
+      // if (tokenRefreshed) {
+      //   // Retry only if token was refreshed
+      //   return retryFailedRequest(url, data, method);
+      // } else {
+      //   // Don't retry if refresh failed
+      //   throw error;
+      // }
     }
     throw error;
   };
